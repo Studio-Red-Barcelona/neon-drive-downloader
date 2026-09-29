@@ -3652,8 +3652,8 @@ class MainWindow(QMainWindow):
             self.last_download_status.setText("Последняя скачанная версия: ещё не скачивалась")
             self.last_download_status.setToolTip("")
             self.last_download_status.setProperty("cached", False)
-        self.last_download_status.style().unpolish(self.last_download_status)
-        self.last_download_status.style().polish(self.last_download_status)
+        QApplication.style().unpolish(self.last_download_status)
+        QApplication.style().polish(self.last_download_status)
 
     def open_version_manager(self) -> None:
         candidates = [
@@ -3686,8 +3686,8 @@ class MainWindow(QMainWindow):
             else "○  НЕ УСТАНОВЛЕНО"
         )
         self.addon_status_badge.setProperty("installed", installed)
-        self.addon_status_badge.style().unpolish(self.addon_status_badge)
-        self.addon_status_badge.style().polish(self.addon_status_badge)
+        QApplication.style().unpolish(self.addon_status_badge)
+        QApplication.style().polish(self.addon_status_badge)
         busy = bool(self.addon_install_thread and self.addon_install_thread.isRunning())
         self.addon_install_button.setText(
             "ПЕРЕУСТАНОВИТЬ" if installed else "СКАЧАТЬ И УСТАНОВИТЬ"
@@ -4779,8 +4779,8 @@ class MainWindow(QMainWindow):
         }
         self.rclone_profile_note.setText(notes.get(profile, notes["manual"]))
         self.rclone_profile_note.setProperty("warning", profile == "extreme")
-        self.rclone_profile_note.style().unpolish(self.rclone_profile_note)
-        self.rclone_profile_note.style().polish(self.rclone_profile_note)
+        QApplication.style().unpolish(self.rclone_profile_note)
+        QApplication.style().polish(self.rclone_profile_note)
 
     def apply_window_size_mode(self) -> None:
         if not hasattr(self, "window_size_combo"):
@@ -5177,8 +5177,8 @@ class MainWindow(QMainWindow):
         else:
             self.google_account_identity.setText("OAuth2: аккаунт не подключён")
         self.google_drive_status.setProperty("ready", connected)
-        self.google_drive_status.style().unpolish(self.google_drive_status)
-        self.google_drive_status.style().polish(self.google_drive_status)
+        QApplication.style().unpolish(self.google_drive_status)
+        QApplication.style().polish(self.google_drive_status)
         busy = self.google_drive_oauth_thread is not None
         self.google_drive_add_button.setEnabled(not busy)
         self.google_account_combo.setEnabled(bool(accounts) and not busy)
@@ -5370,8 +5370,8 @@ class MainWindow(QMainWindow):
     def set_system_health_state(self, state: str, text: str) -> None:
         self.system_health_status.setText(text)
         self.system_health_status.setProperty("state", state)
-        self.system_health_status.style().unpolish(self.system_health_status)
-        self.system_health_status.style().polish(self.system_health_status)
+        QApplication.style().unpolish(self.system_health_status)
+        QApplication.style().polish(self.system_health_status)
 
     def maybe_auto_system_health_check(self) -> None:
         if self.auto_system_health_check.isChecked() and not self.running and self.cloud_browser is None:
@@ -5543,8 +5543,8 @@ class MainWindow(QMainWindow):
                 "Rclone · встроен и готов" if rclone_path else "Rclone · требуется восстановление"
             )
         self.engine_status.setProperty("ready", required_ready)
-        self.engine_status.style().unpolish(self.engine_status)
-        self.engine_status.style().polish(self.engine_status)
+        QApplication.style().unpolish(self.engine_status)
+        QApplication.style().polish(self.engine_status)
 
     def selected_rclone_options(self) -> RcloneOptions:
         managed_config = managed_rclone_config_path()
@@ -5687,8 +5687,8 @@ class MainWindow(QMainWindow):
                 "colorRole", "download" if resumable else ("upload" if direction == "upload" else "download")
             )
             panel.start_button.setEnabled(resumable or not self.running)
-            panel.start_button.style().unpolish(panel.start_button)
-            panel.start_button.style().polish(panel.start_button)
+            QApplication.style().unpolish(panel.start_button)
+            QApplication.style().polish(panel.start_button)
 
     def start_or_resume_transfer(self, direction: str) -> None:
         if self.running and self.paused and direction == self.active_transfer:
