@@ -1,5 +1,14 @@
 # Changelog
 
+## 6.0.0-beta.2
+
+- Removed the Google Drive-only restriction from the Download page.
+- Added separate Google Drive, Explorer file, and Explorer folder source buttons.
+- Enabled drag-and-drop from Explorer on both Download and Upload pages.
+- Kept automatic route detection: Drive paths use Neon Rclone, while ordinary local,
+  external, and network paths use the matching local transfer engine.
+- Added cross-platform regression coverage for both Download source workflows.
+
 ## 6.0.0-beta.1
 
 - Rebuilt the main window around two clear Google Drive-style pages: Download and Upload.

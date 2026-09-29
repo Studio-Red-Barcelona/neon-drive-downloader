@@ -107,7 +107,7 @@ class Beta4Tests(unittest.TestCase):
         self.app.processEvents()
         panel = window.transfer_panels["download"]
         for button in (
-            panel.choose_file_button,
+            panel.google_source_button,
             panel.choose_files_button,
             panel.choose_folder_button,
             panel.start_button,
@@ -115,8 +115,11 @@ class Beta4Tests(unittest.TestCase):
             panel.hard_stop_button,
         ):
             self.assertGreater(button.width(), 100, button.text())
+        cloud_position = panel.source_actions_layout.getItemPosition(
+            panel.source_actions_layout.indexOf(panel.google_source_button)
+        )
         source_file_position = panel.source_actions_layout.getItemPosition(
-            panel.source_actions_layout.indexOf(panel.choose_file_button)
+            panel.source_actions_layout.indexOf(panel.choose_files_button)
         )
         source_folder_position = panel.source_actions_layout.getItemPosition(
             panel.source_actions_layout.indexOf(panel.choose_folder_button)
@@ -127,7 +130,8 @@ class Beta4Tests(unittest.TestCase):
         hard_stop_position = panel.transfer_actions_layout.getItemPosition(
             panel.transfer_actions_layout.indexOf(panel.hard_stop_button)
         )
-        self.assertEqual(source_file_position[0], 0)
+        self.assertEqual(cloud_position[0], 0)
+        self.assertEqual(source_file_position[0], 1)
         self.assertEqual(source_folder_position[0], 1)
         self.assertEqual(start_position[0], 0)
         self.assertEqual(hard_stop_position[0], 1)

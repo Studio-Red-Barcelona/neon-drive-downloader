@@ -2098,7 +2098,7 @@ class MainWindow(QMainWindow):
         form.setSpacing(9)
         hero_row = QHBoxLayout()
         transfer_title = QLabel(
-            "Выгрузить в Google Drive" if upload else "Скачать с Google Drive"
+            "Выгрузить в Google Drive" if upload else "Скачать файлы"
         )
         transfer_title.setObjectName("transferTitle")
         preset_combo = QComboBox()
@@ -2116,30 +2116,25 @@ class MainWindow(QMainWindow):
         sources = QPlainTextEdit()
         sources.setPlaceholderText(
             "Выберите файлы и папки на компьютере…"
-            if upload else "Выберите файлы и папки в Google Drive…"
+            if upload else "Выберите источник в Google Drive или через Проводник…"
         )
         sources.setReadOnly(True)
         sources.setFixedHeight(72)
-        source_display = DropSourceEdit(upload)
+        source_display = DropSourceEdit(True)
         source_display.setPlaceholderText(sources.placeholderText())
         source_display.setFixedHeight(72)
-        if upload:
-            source_display.pathsDropped.connect(
-                lambda paths, selected=direction: self._append_sources_for(selected, paths)
-            )
+        source_display.pathsDropped.connect(
+            lambda paths, selected=direction: self._append_sources_for(selected, paths)
+        )
         source_buttons = QGridLayout()
         source_buttons.setContentsMargins(0, 0, 0, 0)
-        choose_files_button = QPushButton(
-            "Выбрать файлы" if upload else "Открыть Google Drive"
-        )
+        choose_files_button = QPushButton("Выбрать файлы")
         choose_files_button.setProperty("colorRole", "download")
         choose_files_button.setToolTip("Выбрать один или несколько файлов через Проводник")
         choose_files_button.clicked.connect(
             lambda _checked=False, selected=direction: self.choose_files_for(selected)
         )
-        choose_folder_button = QPushButton(
-            "Выбрать папки" if upload else "Выбрать папку в Drive"
-        )
+        choose_folder_button = QPushButton("Выбрать папки")
         choose_folder_button.setProperty("colorRole", "folder")
         choose_folder_button.setToolTip(
             "Выбрать одну или несколько целых папок либо корень подключённого диска"
@@ -2158,17 +2153,26 @@ class MainWindow(QMainWindow):
             lambda _checked=False, selected=direction: self.choose_single_file_for(selected)
         )
         choose_file_button.setVisible(upload)
-        choose_files_button.setText("Добавить файлы" if upload else "Выбрать в Google Drive")
-        source_buttons.addWidget(choose_file_button, 0, 0)
-        source_buttons.addWidget(choose_files_button, 0, 1, 1, 2)
-        source_buttons.addWidget(choose_folder_button, 1, 0, 1, 2)
-        source_buttons.addWidget(clear_button, 1, 2)
-        if not upload:
-            source_buttons.removeWidget(choose_files_button)
-            source_buttons.removeWidget(clear_button)
-            source_buttons.addWidget(choose_files_button, 0, 0, 1, 2)
+        choose_files_button.setText("Добавить файлы" if upload else "Выбрать файлы")
+        google_source_button = QPushButton("Google Drive")
+        google_source_button.setProperty("colorRole", "download")
+        google_source_button.setToolTip(
+            "Выбрать один или несколько файлов и папок во встроенном проводнике Google Drive"
+        )
+        google_source_button.clicked.connect(
+            lambda _checked=False: self.choose_google_drive_items(replace=False)
+        )
+        google_source_button.setVisible(not upload)
+        if upload:
+            source_buttons.addWidget(choose_file_button, 0, 0)
+            source_buttons.addWidget(choose_files_button, 0, 1, 1, 2)
+            source_buttons.addWidget(choose_folder_button, 1, 0, 1, 2)
+            source_buttons.addWidget(clear_button, 1, 2)
+        else:
+            source_buttons.addWidget(google_source_button, 0, 0, 1, 2)
             source_buttons.addWidget(clear_button, 0, 2)
-            choose_folder_button.hide()
+            source_buttons.addWidget(choose_files_button, 1, 0)
+            source_buttons.addWidget(choose_folder_button, 1, 1, 1, 2)
         source_buttons.setColumnStretch(0, 1)
         source_buttons.setColumnStretch(1, 1)
 
@@ -2211,7 +2215,7 @@ class MainWindow(QMainWindow):
         path_grid.setHorizontalSpacing(16)
         path_grid.setVerticalSpacing(6)
         source_heading_label = self.label(
-            "С КОМПЬЮТЕРА" if upload else "ИЗ GOOGLE DRIVE"
+            "С КОМПЬЮТЕРА" if upload else "ИЗ GOOGLE DRIVE ИЛИ ПРОВОДНИКА"
         )
         path_grid.addWidget(source_heading_label, 0, 0)
         destination_heading = QHBoxLayout()
@@ -2465,6 +2469,7 @@ class MainWindow(QMainWindow):
         panel.source_display = source_display
         panel.destination_display = destination_display
         panel.google_drive_button = google_drive_button
+        panel.google_source_button = google_source_button
         panel.direction_toggle_button = direction_toggle_button
         panel.speed_graph = speed_graph
         panel.graph_selector = graph_selector
@@ -6031,9 +6036,6 @@ class MainWindow(QMainWindow):
         self._append_sources_for("download", paths)
 
     def choose_files_for(self, direction: str) -> None:
-        if direction == "download":
-            self.choose_google_drive_items(replace=False)
-            return
         key = "last_upload_source_dir" if direction == "upload" else "last_source_dir"
         start = self.settings.value(key, "")
         files, _ = QFileDialog.getOpenFileNames(self, "Выберите файлы", start, "Все файлы (*)")
@@ -6045,9 +6047,6 @@ class MainWindow(QMainWindow):
 
     def choose_single_file_for(self, direction: str) -> None:
         if self.running:
-            return
-        if direction == "download":
-            self.choose_google_drive_items(replace=True)
             return
         key = "last_upload_source_dir" if direction == "upload" else "last_source_dir"
         selected, _ = QFileDialog.getOpenFileName(
@@ -6063,9 +6062,6 @@ class MainWindow(QMainWindow):
         self.choose_files_for("download")
 
     def choose_source_folder_for(self, direction: str) -> None:
-        if direction == "download":
-            self.choose_google_drive_items(replace=False)
-            return
         key = "last_upload_source_dir" if direction == "upload" else "last_source_dir"
         start = str(self.settings.value(key, "") or "")
         folders = select_source_folders(self, start)
@@ -6344,6 +6340,7 @@ class MainWindow(QMainWindow):
                     panel.choose_folder_button,
                     panel.clear_button,
                     panel.browse_button,
+                    getattr(panel, "google_source_button", panel.browse_button),
                     getattr(panel, "google_drive_button", panel.browse_button),
                     getattr(panel, "direction_toggle_button", panel.browse_button),
                 ]
