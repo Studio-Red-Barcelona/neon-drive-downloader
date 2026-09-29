@@ -10,9 +10,9 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 os.environ.setdefault("NEON_DRIVE_DISABLE_AUTO_UPDATE", "1")
 os.environ.setdefault("NEON_DRIVE_DISABLE_NETWORK", "1")
 
-from PySide6.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication, QFileDialog
 
-from neon_drive.app import MainWindow
+from neon_drive.app import MainWindow, style_local_file_dialog
 
 
 class Generation6Beta2Tests(unittest.TestCase):
@@ -81,6 +81,17 @@ class Generation6Beta2Tests(unittest.TestCase):
         with patch("neon_drive.app.select_source_folders", return_value=[folder]):
             window.choose_source_folder_for("download")
         self.assertEqual(window.transfer_panels["download"].sources.toPlainText(), folder)
+
+    def test_multi_folder_picker_has_readable_light_object_list(self) -> None:
+        dialog = QFileDialog()
+        self.addCleanup(dialog.deleteLater)
+        style_local_file_dialog(dialog)
+        style = dialog.styleSheet().casefold()
+        self.assertIn("background: #ffffff", style)
+        self.assertIn("color: #202124", style)
+        self.assertIn("qtreeview::item:selected", style)
+        self.assertIn("selection-color: #174ea6", style)
+        self.assertGreaterEqual(dialog.minimumWidth(), 680)
 
 
 if __name__ == "__main__":

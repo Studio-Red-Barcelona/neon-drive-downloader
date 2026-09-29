@@ -1434,6 +1434,7 @@ class TransferPanel:
 def select_source_folders(parent: QWidget, start: str = "") -> list[str]:
     """Select one or more source folders with Qt's extended-selection dialog."""
     dialog = QFileDialog(parent, "Выберите одну или несколько папок", start)
+    style_local_file_dialog(dialog)
     dialog.setOption(QFileDialog.Option.DontUseNativeDialog, True)
     dialog.setOption(QFileDialog.Option.ShowDirsOnly, True)
     dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
@@ -1453,6 +1454,104 @@ def select_source_folders(parent: QWidget, start: str = "") -> list[str]:
             folders.append(str(path))
             seen.add(normalized)
     return folders
+
+
+def style_local_file_dialog(dialog: QFileDialog) -> None:
+    """Keep the multi-folder picker readable independently of the app theme."""
+    dialog.setObjectName("localFilePicker")
+    dialog.resize(820, 560)
+    dialog.setMinimumSize(680, 460)
+    dialog.setStyleSheet(
+        """
+        QFileDialog#localFilePicker,
+        QFileDialog#localFilePicker QWidget {
+            background: #f8fafd;
+            color: #202124;
+        }
+        QFileDialog#localFilePicker QTreeView,
+        QFileDialog#localFilePicker QListView {
+            background: #ffffff;
+            color: #202124;
+            alternate-background-color: #f8fafd;
+            border: 1px solid #dadce0;
+            border-radius: 6px;
+            outline: none;
+            selection-background-color: #d2e3fc;
+            selection-color: #174ea6;
+        }
+        QFileDialog#localFilePicker QTreeView::item,
+        QFileDialog#localFilePicker QListView::item {
+            background: transparent;
+            color: #202124;
+            min-height: 26px;
+            padding: 3px 5px;
+        }
+        QFileDialog#localFilePicker QTreeView::item:hover,
+        QFileDialog#localFilePicker QListView::item:hover {
+            background: #f1f3f4;
+            color: #202124;
+        }
+        QFileDialog#localFilePicker QTreeView::item:selected,
+        QFileDialog#localFilePicker QListView::item:selected {
+            background: #d2e3fc;
+            color: #174ea6;
+        }
+        QFileDialog#localFilePicker QHeaderView::section {
+            background: #e8f0fe;
+            color: #202124;
+            border: 0;
+            border-right: 1px solid #dadce0;
+            border-bottom: 1px solid #dadce0;
+            padding: 7px;
+            font-weight: 600;
+        }
+        QFileDialog#localFilePicker QLineEdit,
+        QFileDialog#localFilePicker QComboBox {
+            background: #ffffff;
+            color: #202124;
+            border: 1px solid #bdc1c6;
+            border-radius: 6px;
+            min-height: 32px;
+            padding: 0 8px;
+        }
+        QFileDialog#localFilePicker QComboBox QAbstractItemView {
+            background: #ffffff;
+            color: #202124;
+            selection-background-color: #d2e3fc;
+            selection-color: #174ea6;
+        }
+        QFileDialog#localFilePicker QPushButton,
+        QFileDialog#localFilePicker QToolButton {
+            background: #ffffff;
+            color: #202124;
+            border: 1px solid #dadce0;
+            border-radius: 6px;
+            min-height: 30px;
+            padding: 0 10px;
+        }
+        QFileDialog#localFilePicker QPushButton:hover,
+        QFileDialog#localFilePicker QToolButton:hover {
+            background: #e8f0fe;
+            color: #174ea6;
+        }
+        QFileDialog#localFilePicker QPushButton:disabled,
+        QFileDialog#localFilePicker QLineEdit:disabled,
+        QFileDialog#localFilePicker QComboBox:disabled {
+            background: #f1f3f4;
+            color: #80868b;
+        }
+        QFileDialog#localFilePicker QScrollBar:vertical {
+            background: #f1f3f4;
+            width: 12px;
+            margin: 0;
+        }
+        QFileDialog#localFilePicker QScrollBar::handle:vertical {
+            background: #bdc1c6;
+            border-radius: 6px;
+            min-height: 28px;
+        }
+        """
+    )
 
 
 class ReleaseWelcomeDialog(QDialog):
