@@ -3652,8 +3652,7 @@ class MainWindow(QMainWindow):
             self.last_download_status.setText("Последняя скачанная версия: ещё не скачивалась")
             self.last_download_status.setToolTip("")
             self.last_download_status.setProperty("cached", False)
-        QApplication.style().unpolish(self.last_download_status)
-        QApplication.style().polish(self.last_download_status)
+        self.last_download_status.setStyleSheet(self.last_download_status.styleSheet())
 
     def open_version_manager(self) -> None:
         candidates = [
@@ -3686,8 +3685,7 @@ class MainWindow(QMainWindow):
             else "○  НЕ УСТАНОВЛЕНО"
         )
         self.addon_status_badge.setProperty("installed", installed)
-        QApplication.style().unpolish(self.addon_status_badge)
-        QApplication.style().polish(self.addon_status_badge)
+        self.addon_status_badge.setStyleSheet(self.addon_status_badge.styleSheet())
         busy = bool(self.addon_install_thread and self.addon_install_thread.isRunning())
         self.addon_install_button.setText(
             "ПЕРЕУСТАНОВИТЬ" if installed else "СКАЧАТЬ И УСТАНОВИТЬ"
@@ -3756,12 +3754,10 @@ class MainWindow(QMainWindow):
             selected = key == preset
             button.setText("АКТИВНЫЙ ПРОФИЛЬ" if selected else "ВЫБРАТЬ")
             button.setProperty("selected", selected)
-            # QWidget.style() can be exposed as QWidgetItem by some PySide6
-            # Apple Silicon builds. The application style is stable on every
-            # supported platform and performs the same dynamic-property refresh.
-            application_style = QApplication.style()
-            application_style.unpolish(button)
-            application_style.polish(button)
+            # Reassigning the local sheet reliably refreshes dynamic properties.
+            # Calling QStyle.unpolish is unsafe in some PySide6 macOS builds,
+            # where the binding may expose a QWidgetItem instead of QStyle.
+            button.setStyleSheet(button.styleSheet())
 
         if not hasattr(self, "copy_profile_combo"):
             return
@@ -4779,8 +4775,7 @@ class MainWindow(QMainWindow):
         }
         self.rclone_profile_note.setText(notes.get(profile, notes["manual"]))
         self.rclone_profile_note.setProperty("warning", profile == "extreme")
-        QApplication.style().unpolish(self.rclone_profile_note)
-        QApplication.style().polish(self.rclone_profile_note)
+        self.rclone_profile_note.setStyleSheet(self.rclone_profile_note.styleSheet())
 
     def apply_window_size_mode(self) -> None:
         if not hasattr(self, "window_size_combo"):
@@ -5177,8 +5172,7 @@ class MainWindow(QMainWindow):
         else:
             self.google_account_identity.setText("OAuth2: аккаунт не подключён")
         self.google_drive_status.setProperty("ready", connected)
-        QApplication.style().unpolish(self.google_drive_status)
-        QApplication.style().polish(self.google_drive_status)
+        self.google_drive_status.setStyleSheet(self.google_drive_status.styleSheet())
         busy = self.google_drive_oauth_thread is not None
         self.google_drive_add_button.setEnabled(not busy)
         self.google_account_combo.setEnabled(bool(accounts) and not busy)
@@ -5370,8 +5364,7 @@ class MainWindow(QMainWindow):
     def set_system_health_state(self, state: str, text: str) -> None:
         self.system_health_status.setText(text)
         self.system_health_status.setProperty("state", state)
-        QApplication.style().unpolish(self.system_health_status)
-        QApplication.style().polish(self.system_health_status)
+        self.system_health_status.setStyleSheet(self.system_health_status.styleSheet())
 
     def maybe_auto_system_health_check(self) -> None:
         if self.auto_system_health_check.isChecked() and not self.running and self.cloud_browser is None:
@@ -5543,8 +5536,7 @@ class MainWindow(QMainWindow):
                 "Rclone · встроен и готов" if rclone_path else "Rclone · требуется восстановление"
             )
         self.engine_status.setProperty("ready", required_ready)
-        QApplication.style().unpolish(self.engine_status)
-        QApplication.style().polish(self.engine_status)
+        self.engine_status.setStyleSheet(self.engine_status.styleSheet())
 
     def selected_rclone_options(self) -> RcloneOptions:
         managed_config = managed_rclone_config_path()
@@ -5687,8 +5679,7 @@ class MainWindow(QMainWindow):
                 "colorRole", "download" if resumable else ("upload" if direction == "upload" else "download")
             )
             panel.start_button.setEnabled(resumable or not self.running)
-            QApplication.style().unpolish(panel.start_button)
-            QApplication.style().polish(panel.start_button)
+            panel.start_button.setStyleSheet(panel.start_button.styleSheet())
 
     def start_or_resume_transfer(self, direction: str) -> None:
         if self.running and self.paused and direction == self.active_transfer:
