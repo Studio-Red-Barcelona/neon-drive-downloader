@@ -2,20 +2,20 @@
 
 ### Ваши файлы. Понятная передача. Windows + macOS.
 
-![Version](https://img.shields.io/badge/version-5.6.0--beta.6-4285F4)
+![Version](https://img.shields.io/badge/version-6.0.0--beta.1-4285F4)
 ![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011-34A853)
 ![macOS](https://img.shields.io/badge/macOS-12%2B-FBBC04)
 ![Channel](https://img.shields.io/badge/channel-beta-EA4335)
 
-## Скачать 5.6.0 Beta 6
+## Скачать 6.0.0 Beta 1
 
 | Система | Приложение со встроенным Rclone | Менеджер версий |
 | :--- | :--- | :--- |
-| 🪟 **Windows 10 / 11 · x64** | [⬇ Скачать Setup.exe](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v5.6.0-beta.6/NeonDrive-Setup.exe) | [⬇ Скачать Installer.exe](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v5.6.0-beta.6/NeonDriveInstaller.exe) |
-| 🍎 **Mac · Apple Silicon** | [⬇ Скачать приложение ARM64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v5.6.0-beta.6/NeonDrive-macOS-arm64.dmg) | [⬇ Скачать установщик ARM64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v5.6.0-beta.6/NeonDriveInstaller-macOS-arm64.dmg) |
-| 💻 **Mac · Intel** | [⬇ Скачать приложение x64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v5.6.0-beta.6/NeonDrive-macOS-x64.dmg) | [⬇ Скачать установщик x64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v5.6.0-beta.6/NeonDriveInstaller-macOS-x64.dmg) |
+| 🪟 **Windows 10 / 11 · x64** | [⬇ Скачать Setup.exe](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.1/NeonDrive-Setup.exe) | [⬇ Скачать Installer.exe](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.1/NeonDriveInstaller.exe) |
+| 🍎 **Mac · Apple Silicon** | [⬇ Скачать приложение ARM64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.1/NeonDrive-macOS-arm64.dmg) | [⬇ Скачать установщик ARM64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.1/NeonDriveInstaller-macOS-arm64.dmg) |
+| 💻 **Mac · Intel** | [⬇ Скачать приложение x64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.1/NeonDrive-macOS-x64.dmg) | [⬇ Скачать установщик x64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.1/NeonDriveInstaller-macOS-x64.dmg) |
 
-**Для Windows:** [установить Neon Drive](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v5.6.0-beta.6/NeonDrive-Setup.exe) · [менеджер новых и старых версий](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v5.6.0-beta.6/NeonDriveInstaller.exe).
+**Для Windows:** [установить Neon Drive](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.1/NeonDrive-Setup.exe) · [менеджер новых и старых версий](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.1/NeonDriveInstaller.exe).
 
 [Все версии и изменения →](https://github.com/prostoodin1/neon-drive-downloader/releases)
 · [Сообщить об ошибке →](https://github.com/prostoodin1/neon-drive-downloader/issues)
@@ -27,7 +27,32 @@ Git и аккаунт GitHub **не нужны**. Публичных ZIP/portabl
 
 Neon Drive — независимое приложение, не продукт Google.
 
-![Neon Drive 5.6 Beta 6 — настоящие виджеты приложения](docs/images/beta8-dark.png)
+## Интерфейс Neon Drive 6
+
+| Скачать | Выгрузить |
+| :---: | :---: |
+| ![Страница скачивания](docs/screenshots/neon-drive-6/download.png) | ![Страница выгрузки](docs/screenshots/neon-drive-6/upload.png) |
+
+![Компактные настройки Neon Drive 6](docs/screenshots/neon-drive-6/settings.png)
+
+Все скриншоты собраны из настоящих виджетов приложения с демонстрационными,
+обезличенными путями и аккаунтом.
+
+## Новое в 6.0.0 Beta 1
+
+- **Две понятные страницы:** только «Скачать» и «Выгрузить» в основном меню.
+- **Встроенный проводник Google Drive:** выбор нескольких облачных файлов или
+  целых папок без ручного ввода Rclone-пути.
+- **Простая выгрузка:** локальные файлы и папки можно выбрать кнопкой или
+  перетащить в окно; папка назначения выбирается в облачном проводнике.
+- **Минимум настроек:** аккаунты, папка загрузки, параллельность, тема,
+  уведомления, автозапуск, обновления и диагностика.
+- **Удобный размер:** полноэкранное разворачивание отключено, а интерфейс
+  адаптируется между компактным и обычным размером без исчезновения действий.
+- **Спокойная светлая тема:** новый интерфейс по умолчанию оформлен в цветах
+  Google Drive; технические пути Rclone скрыты за понятными названиями.
+
+## История поколения 5.6
 
 ## Новое в 5.6.0 Beta 6
 

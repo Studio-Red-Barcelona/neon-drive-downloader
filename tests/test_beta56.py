@@ -129,7 +129,7 @@ class Beta56Tests(unittest.TestCase):
         panel.start_button.click()
         worker.resume.assert_called_once_with()
         self.assertFalse(window.paused)
-        self.assertEqual(panel.start_button.text(), "Начать передачу")
+        self.assertEqual(panel.start_button.text(), "Скачать")
 
     def test_remote_sources_skip_local_source_gate_and_have_file_graph(self) -> None:
         window = self.window()

@@ -372,7 +372,7 @@ class StopAfterCurrentFileTests(unittest.TestCase):
         window.force_exit = True
         window.close()
 
-    def test_advanced_mode_stays_inside_settings_and_reveals_terminal(self) -> None:
+    def test_generation6_keeps_advanced_mode_and_terminal_hidden(self) -> None:
         window = MainWindow()
         window.notifications_check.setChecked(False)
         window.advanced_mode_check.setChecked(False)
@@ -383,21 +383,21 @@ class StopAfterCurrentFileTests(unittest.TestCase):
         window.advanced_mode_check.setChecked(True)
         window.update_settings_visibility()
         self.assertEqual(window.tabs.indexOf(window.advanced_page), -1)
-        self.assertTrue(window.settings_page.isAncestorOf(window.advanced_page))
-        self.assertFalse(window.transfer_panels["download"].terminal_card.isHidden())
+        self.assertFalse(window.settings_page.isAncestorOf(window.advanced_page))
+        self.assertTrue(window.transfer_panels["download"].terminal_card.isHidden())
 
         window.advanced_mode_check.setChecked(False)
         window.force_exit = True
         window.close()
 
-    def test_dashboard_sidebar_can_collapse_without_changing_page(self) -> None:
+    def test_generation6_sidebar_is_fixed_and_keeps_current_page(self) -> None:
         window = MainWindow()
         window.notifications_check.setChecked(False)
         window.animations_check.setChecked(True)
         window.update_settings_visibility()
         page = window.tabs.currentWidget()
         self.assertTrue(window.tabs.tabBar().isHidden())
-        self.assertFalse(window.navigation_toggle_button.isHidden())
+        self.assertTrue(window.navigation_toggle_button.isHidden())
 
         window.files_tab_check.setChecked(True)
         window.tabs.setCurrentWidget(window.files_page)
@@ -411,7 +411,7 @@ class StopAfterCurrentFileTests(unittest.TestCase):
         self.assertEqual(window.sidebar.width(), 66)
         self.assertIs(window.tabs.currentWidget(), page)
         window.set_navigation_panel_expanded(True, animate=False)
-        self.assertEqual(window.sidebar.width(), 220)
+        self.assertEqual(window.sidebar.width(), 196)
         self.assertTrue(window.tabs.tabBar().isHidden())
         self.assertIs(window.tabs.currentWidget(), page)
 
@@ -507,10 +507,10 @@ class StopAfterCurrentFileTests(unittest.TestCase):
 
         restored = MainWindow()
         restored.notifications_check.setChecked(False)
-        self.assertTrue(restored.advanced_mode_check.isChecked())
-        self.assertTrue(restored.files_tab_check.isChecked())
+        self.assertFalse(restored.advanced_mode_check.isChecked())
+        self.assertFalse(restored.files_tab_check.isChecked())
         self.assertEqual(restored.navigation_mode_combo.currentData(), "side_compact")
-        self.assertFalse(restored.sidebar_expanded)
+        self.assertTrue(restored.sidebar_expanded)
         self.assertEqual(restored.window_size_combo.currentData(), "remember")
         self.assertEqual((restored.width(), restored.height()), (1010, 720))
         self.assertEqual(restored.theme_combo.currentData(), "dark")
@@ -522,7 +522,7 @@ class StopAfterCurrentFileTests(unittest.TestCase):
         self.assertEqual(restored.destination.text(), r"D:\Remembered Downloads")
         self.assertEqual(restored.upload_sources.toPlainText(), r"D:\Remembered\local.bin")
         self.assertEqual(restored.upload_destination.text(), r"G:\Remembered Uploads")
-        self.assertIs(restored.tabs.currentWidget(), restored.files_page)
+        self.assertIs(restored.tabs.currentWidget(), restored.settings_page)
         self.assertTrue(restored.settings.value("window_geometry"))
 
         restored.advanced_mode_check.setChecked(False)
@@ -632,17 +632,17 @@ class StopAfterCurrentFileTests(unittest.TestCase):
         self.assertTrue(window.upload_page.isAncestorOf(upload.start_button))
         self.assertFalse(window.settings_page.isAncestorOf(download.status_card))
         self.assertFalse(window.updates_page.isAncestorOf(upload.status_card))
-        self.assertEqual(download.start_button.text(), "Начать передачу")
-        self.assertEqual(upload.start_button.text(), "Начать передачу")
+        self.assertEqual(download.start_button.text(), "Скачать")
+        self.assertEqual(upload.start_button.text(), "Выгрузить")
 
         window.window_size_combo.setCurrentIndex(
             window.window_size_combo.findData("small")
         )
-        self.assertEqual((window.width(), window.height()), (900, 640))
+        self.assertEqual((window.width(), window.height()), (960, 650))
         window.window_size_combo.setCurrentIndex(
             window.window_size_combo.findData("large")
         )
-        self.assertEqual((window.width(), window.height()), (1380, 880))
+        self.assertEqual((window.width(), window.height()), (1360, 880))
 
         window.window_size_combo.setCurrentIndex(
             window.window_size_combo.findData("standard")
@@ -650,12 +650,12 @@ class StopAfterCurrentFileTests(unittest.TestCase):
         window.force_exit = True
         window.close()
 
-    def test_stable_build_hides_upload_addon_controls_and_tab(self) -> None:
+    def test_stable_build_keeps_core_upload_and_hides_addon_controls(self) -> None:
         with patch("neon_drive.app.is_beta_build", return_value=False):
             window = MainWindow()
         window.notifications_check.setChecked(False)
 
-        self.assertEqual(window.tabs.indexOf(window.upload_page), -1)
+        self.assertEqual(window.tabs.indexOf(window.upload_page), 1)
         self.assertFalse(hasattr(window, "addon_install_button"))
         window.force_exit = True
         window.close()
@@ -750,7 +750,7 @@ class StopAfterCurrentFileTests(unittest.TestCase):
         window.force_exit = True
         window.close()
 
-    def test_home_upload_direction_uses_explorer_paths_and_robocopy_worker(self) -> None:
+    def test_upload_tab_can_still_copy_to_a_local_filesystem_target(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             source = root / "local-video.mkv"
@@ -761,12 +761,10 @@ class StopAfterCurrentFileTests(unittest.TestCase):
             window = MainWindow()
             window.notifications_check.setChecked(False)
             window.show_transfer_direction("upload")
-            self.assertEqual(window.upload_tab_index, -1)
-            self.assertIs(window.tabs.currentWidget(), window.home_page)
-            self.assertIs(window.home_transfer_stack.currentWidget(), window.upload_page)
+            self.assertEqual(window.upload_tab_index, 1)
+            self.assertIs(window.tabs.currentWidget(), window.upload_page)
             self.assertEqual(window.active_transfer, "upload")
-            self.assertEqual(window.start_button.text(), "Начать передачу")
-            self.assertIn("1.0.0-beta.1", window.addon_status_badge.text())
+            self.assertEqual(window.start_button.text(), "Выгрузить")
 
             window.upload_sources.setPlainText(str(source))
             window.upload_destination.setText(str(drive_destination))

@@ -1,4 +1,29 @@
-# Neon Drive 5.6.0 Beta 6
+# Neon Drive 6.0.0 Beta 1
+
+## Новое поколение интерфейса
+
+- Только две основные страницы: **Скачать** и **Выгрузить**.
+- Выбор нескольких файлов и целых папок Google Drive прямо внутри Neon Drive.
+- Выгрузка локальных файлов и папок, включая перетаскивание мышью.
+- Светлый спокойный дизайн в стиле Google Drive и понятные облачные пути вместо
+  технических строк Rclone.
+- Настройки открываются маленькой шестерёнкой и содержат только аккаунты,
+  папку загрузки, число передач, тему, уведомления, запуск и обновления.
+- Окно сразу открывается в удобном размере; полноэкранное разворачивание отключено,
+  а основные кнопки остаются видимыми в компактном режиме.
+- Первый запуск версии один раз показывает главное из обновления.
+
+## Скачать
+
+| Система | Приложение | Менеджер версий |
+| :--- | :--- | :--- |
+| Windows 10/11 x64 | [NeonDrive-Setup.exe](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.1/NeonDrive-Setup.exe) | [NeonDriveInstaller.exe](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.1/NeonDriveInstaller.exe) |
+| macOS Apple Silicon | [Приложение ARM64](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.1/NeonDrive-macOS-arm64.dmg) | [Установщик ARM64](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.1/NeonDriveInstaller-macOS-arm64.dmg) |
+| macOS Intel | [Приложение x64](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.1/NeonDrive-macOS-x64.dmg) | [Установщик x64](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.1/NeonDriveInstaller-macOS-x64.dmg) |
+
+---
+
+## История поколения 5.6
 
 ## Исправления и новые возможности
 

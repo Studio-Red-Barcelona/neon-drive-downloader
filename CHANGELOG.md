@@ -1,5 +1,19 @@
 # Changelog
 
+## 6.0.0-beta.1
+
+- Rebuilt the main window around two clear Google Drive-style pages: Download and Upload.
+- Added a native cloud item browser for choosing several Google Drive files or folders.
+- Made upload a core feature with local file, multiple-file, folder, and drag-and-drop input.
+- Replaced the advanced settings surface with a compact essentials-only settings page.
+- Added an account-aware header, human-readable cloud paths, clearer active-transfer cards,
+  and a collapsible transfer list.
+- Disabled maximize/fullscreen and constrained the window to useful desktop sizes so primary
+  actions remain visible without manually stretching the application.
+- Switched fresh and migrated installations to the soft Google Drive light theme.
+- Added reproducible, anonymized Generation 6 screenshots for the project page and website.
+- Added regression coverage for the two-page navigation and cloud file/folder selection.
+
 ## 5.6.0-beta.6
 
 - Restore real simultaneous Google Drive jobs when `Multiple at once` / `All` is

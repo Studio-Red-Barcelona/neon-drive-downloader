@@ -243,15 +243,16 @@ class Beta8Tests(unittest.TestCase):
 
     def test_single_file_replaces_list_and_stop_is_outside_terminal(self):
         window = self.window()
-        panel = window.transfer_panels["download"]
+        panel = window.transfer_panels["upload"]
         panel.sources.setPlainText("old1\nold2")
         with patch("neon_drive.app.QFileDialog.getOpenFileName", return_value=("new.bin", "")):
-            window.choose_single_file_for("download")
+            window.choose_single_file_for("upload")
         self.assertEqual(panel.sources.toPlainText(), "new.bin")
         self.assertEqual(panel.choose_files_button.text(), "Добавить файлы")
         self.assertFalse(panel.terminal_card.isAncestorOf(panel.visible_stop_button))
         window.set_transfer_controls_enabled(True)
-        self.assertTrue(panel.visible_stop_button.isEnabled())
+        self.assertFalse(panel.visible_stop_button.isEnabled())
+        self.assertTrue(panel.visible_stop_button.isHidden())
 
     def test_extreme_upload_chunk_and_saved_settings(self):
         window = self.window()

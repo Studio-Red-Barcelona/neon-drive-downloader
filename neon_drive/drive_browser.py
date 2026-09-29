@@ -11,7 +11,16 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from PySide6.QtCore import QThread, Qt, Signal
-from PySide6.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QLabel, QListWidget, QListWidgetItem, QPushButton
+from PySide6.QtWidgets import (
+    QAbstractItemView,
+    QDialog,
+    QHBoxLayout,
+    QLabel,
+    QListWidget,
+    QListWidgetItem,
+    QPushButton,
+    QVBoxLayout,
+)
 
 from .google_drive import GOOGLE_DRIVE_REMOTE, google_drive_root, managed_rclone_config_path
 
@@ -228,6 +237,46 @@ class DriveFolder:
         return self.remote_name + "," + ",".join(options) + ":"
 
 
+@dataclass(frozen=True)
+class DriveEntry:
+    """One selectable file or directory in the Google Drive browser."""
+
+    name: str
+    identifier: str
+    parent: DriveFolder
+    is_directory: bool
+    size: int = 0
+    modified: str = ""
+
+    @property
+    def label(self) -> str:
+        return self.parent.label + " / " + self.name
+
+    @property
+    def remote(self) -> str:
+        if self.is_directory and ID_PATTERN.fullmatch(self.identifier):
+            return DriveFolder(
+                self.name,
+                self.identifier,
+                self.parent.drive_id,
+                self.label,
+                remote_name=self.parent.remote_name,
+            ).remote
+        return self.parent.remote + self.name
+
+    @property
+    def folder(self) -> DriveFolder | None:
+        if not self.is_directory or not ID_PATTERN.fullmatch(self.identifier):
+            return None
+        return DriveFolder(
+            self.name,
+            self.identifier,
+            self.parent.drive_id,
+            self.label,
+            remote_name=self.parent.remote_name,
+        )
+
+
 class DriveClient:
     def __init__(self, executable: str, remote_name: str = GOOGLE_DRIVE_REMOTE) -> None:
         self.executable = executable
@@ -315,6 +364,24 @@ class DriveClient:
                 result.append(DriveFolder(name, identifier, parent.drive_id, parent.label + " / " + name, remote_name=self.remote_name))
         return sorted(result, key=lambda folder: folder.name.casefold())
 
+    def items(self, parent: DriveFolder) -> list[DriveEntry]:
+        result: list[DriveEntry] = []
+        for item in self.query(["lsjson", parent.remote]):
+            name = str(item.get("Name", item.get("Path", ""))).strip()
+            if not name:
+                continue
+            result.append(
+                DriveEntry(
+                    name=name,
+                    identifier=str(item.get("ID", "")),
+                    parent=parent,
+                    is_directory=bool(item.get("IsDir")),
+                    size=max(0, int(item.get("Size", 0) or 0)),
+                    modified=str(item.get("ModTime", "")),
+                )
+            )
+        return sorted(result, key=lambda entry: (not entry.is_directory, entry.name.casefold()))
+
     def resolve_virtual(self, value: str, roots: list[DriveFolder]) -> list[DriveFolder]:
         parts = virtual_drive_parts(value)
         managed = MANAGED_PATH.match(value)
@@ -378,13 +445,19 @@ class BrowseThread(QThread):
 
 
 class DriveFolderDialog(QDialog):
-    def __init__(self, executable: str, original: str = "", parent=None):
+    def __init__(
+        self,
+        executable: str,
+        original: str = "",
+        parent=None,
+        remote_name: str = GOOGLE_DRIVE_REMOTE,
+    ):
         super().__init__(parent)
         self.setObjectName("cloudFolderDialog")
         self.setWindowTitle("Google Drive · папка назначения")
         self.resize(660, 520)
         self.setMinimumSize(480, 360)
-        self.client = DriveClient(executable)
+        self.client = DriveClient(executable, remote_name)
         self.trail: list[DriveFolder] = []
         self.roots: list[DriveFolder] = []
         self.selected_folder: DriveFolder | None = None
@@ -527,6 +600,237 @@ class DriveFolderDialog(QDialog):
             super().reject()
 
     def closeEvent(self, event):
+        if self.thread is not None:
+            self.reject()
+            event.ignore()
+        else:
+            super().closeEvent(event)
+
+
+class DriveItemDialog(QDialog):
+    """Google Drive-like browser that selects several cloud files and folders."""
+
+    def __init__(
+        self,
+        executable: str,
+        parent=None,
+        remote_name: str = GOOGLE_DRIVE_REMOTE,
+    ) -> None:
+        super().__init__(parent)
+        self.setObjectName("cloudItemDialog")
+        self.setWindowTitle("Google Drive · выбрать файлы и папки")
+        self.resize(760, 560)
+        self.setMinimumSize(560, 420)
+        self.client = DriveClient(executable, remote_name)
+        self.roots: list[DriveFolder] = []
+        self.trail: list[DriveFolder] = []
+        self.thread: BrowseThread | None = None
+        self.closing = False
+        self.selected_items: list[DriveEntry] = []
+        self.setStyleSheet("""
+            QDialog#cloudItemDialog { background: #f8fafd; color: #202124; }
+            QDialog#cloudItemDialog QLabel { color: #202124; background: transparent; }
+            QDialog#cloudItemDialog QListWidget {
+                background: #ffffff; color: #202124; border: 1px solid #dadce0;
+                border-radius: 14px; padding: 8px; outline: none;
+            }
+            QDialog#cloudItemDialog QListWidget::item {
+                color: #202124; background: #ffffff; padding: 11px 10px;
+                border-radius: 8px;
+            }
+            QDialog#cloudItemDialog QListWidget::item:hover { background: #f1f3f4; }
+            QDialog#cloudItemDialog QListWidget::item:selected {
+                background: #d2e3fc; color: #174ea6;
+            }
+            QDialog#cloudItemDialog QPushButton {
+                background: #ffffff; color: #202124; border: 1px solid #dadce0;
+                border-radius: 18px; min-height: 36px; padding: 0 16px;
+            }
+            QDialog#cloudItemDialog QPushButton:hover { background: #f1f3f4; }
+            QDialog#cloudItemDialog QPushButton:disabled { color: #9aa0a6; }
+            QDialog#cloudItemDialog QPushButton#primary {
+                background: #1a73e8; color: #ffffff; border-color: #1a73e8;
+            }
+        """)
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(20, 18, 20, 18)
+        layout.setSpacing(10)
+        title = QLabel("Выберите файлы и папки")
+        title.setStyleSheet("font-size: 20px; font-weight: 700;")
+        layout.addWidget(title)
+        self.path_label = QLabel("Мой диск, доступные мне и общие диски")
+        self.path_label.setWordWrap(True)
+        layout.addWidget(self.path_label)
+        self.list = QListWidget()
+        self.list.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
+        self.list.itemDoubleClicked.connect(self.enter_selected)
+        self.list.itemSelectionChanged.connect(self.selection_changed)
+        layout.addWidget(self.list, 1)
+        self.status = QLabel("Подключение к Google Drive…")
+        self.status.setWordWrap(True)
+        layout.addWidget(self.status)
+        actions = QHBoxLayout()
+        self.back = QPushButton("Назад")
+        self.back.clicked.connect(self.go_back)
+        self.choose_current = QPushButton("Выбрать текущую папку")
+        self.choose_current.clicked.connect(self.select_current_folder)
+        self.choose = QPushButton("Добавить выбранное", objectName="primary")
+        self.choose.clicked.connect(self.select_entries)
+        self.cancel = QPushButton("Отмена")
+        self.cancel.clicked.connect(self.reject)
+        actions.addWidget(self.back)
+        actions.addWidget(self.choose_current)
+        actions.addStretch()
+        actions.addWidget(self.cancel)
+        actions.addWidget(self.choose)
+        layout.addLayout(actions)
+        self.run_query(self.client.roots, self.roots_loaded)
+
+    def run_query(self, operation, callback) -> None:
+        if self.thread is not None:
+            return
+        self.list.setEnabled(False)
+        self.back.setEnabled(False)
+        self.choose.setEnabled(False)
+        self.choose_current.setEnabled(False)
+        self.status.setText("Чтение Google Drive…")
+        thread = BrowseThread(operation, self)
+        self.thread = thread
+
+        def finished() -> None:
+            self.thread = None
+            if self.closing:
+                super(DriveItemDialog, self).reject()
+            elif thread.error:
+                self.status.setText(thread.error)
+                self.list.setEnabled(True)
+                self.back.setEnabled(bool(self.trail))
+            else:
+                callback(thread.result)
+            thread.deleteLater()
+
+        thread.finished.connect(finished)
+        thread.start()
+
+    def roots_loaded(self, roots: list[DriveFolder]) -> None:
+        self.roots = roots
+        self.trail = []
+        self.show_roots()
+
+    def show_roots(self) -> None:
+        self.list.clear()
+        for folder in self.roots:
+            item = QListWidgetItem("▰  " + folder.name)
+            item.setData(Qt.ItemDataRole.UserRole, folder)
+            self.list.addItem(item)
+        self.path_label.setText("Google Drive")
+        self.status.setText("Двойной щелчок — открыть диск")
+        self.list.setEnabled(True)
+        self.back.setEnabled(False)
+        self.choose.setEnabled(False)
+        self.choose_current.setEnabled(False)
+
+    def show_entries(self, entries: list[DriveEntry]) -> None:
+        self.list.clear()
+        for entry in entries:
+            prefix = "▰" if entry.is_directory else "▤"
+            size = "" if entry.is_directory else f"   {self.human_size(entry.size)}"
+            item = QListWidgetItem(f"{prefix}  {entry.name}{size}")
+            item.setToolTip(entry.label)
+            item.setData(Qt.ItemDataRole.UserRole, entry)
+            self.list.addItem(item)
+        current = self.trail[-1]
+        self.path_label.setText(current.label)
+        self.status.setText("Выберите несколько объектов или откройте папку двойным щелчком")
+        self.list.setEnabled(True)
+        self.back.setEnabled(True)
+        self.choose_current.setEnabled(not current.shared_with_me)
+        self.selection_changed()
+
+    @staticmethod
+    def human_size(value: int) -> str:
+        size = float(max(0, value))
+        for suffix in ("Б", "КБ", "МБ", "ГБ", "ТБ"):
+            if size < 1024 or suffix == "ТБ":
+                return f"{size:.1f} {suffix}" if suffix != "Б" else f"{int(size)} Б"
+            size /= 1024
+        return f"{size:.1f} ТБ"
+
+    def enter_selected(self, item: QListWidgetItem) -> None:
+        value = item.data(Qt.ItemDataRole.UserRole)
+        if isinstance(value, DriveFolder):
+            folder = value
+        elif isinstance(value, DriveEntry):
+            folder = value.folder
+        else:
+            folder = None
+        if folder is None:
+            return
+
+        def loaded(entries: list[DriveEntry]) -> None:
+            self.trail.append(folder)
+            self.show_entries(entries)
+
+        self.run_query(lambda: self.client.items(folder), loaded)
+
+    def go_back(self) -> None:
+        if not self.trail:
+            return
+        if len(self.trail) == 1:
+            self.trail = []
+            self.show_roots()
+            return
+        target = self.trail[-2]
+
+        def loaded(entries: list[DriveEntry]) -> None:
+            self.trail.pop()
+            self.show_entries(entries)
+
+        self.run_query(lambda: self.client.items(target), loaded)
+
+    def selection_changed(self) -> None:
+        entries = [
+            item.data(Qt.ItemDataRole.UserRole)
+            for item in self.list.selectedItems()
+        ]
+        selected = [entry for entry in entries if isinstance(entry, DriveEntry)]
+        self.choose.setEnabled(bool(selected))
+        if selected:
+            self.status.setText(f"Выбрано объектов: {len(selected)}")
+
+    def select_entries(self) -> None:
+        self.selected_items = [
+            item.data(Qt.ItemDataRole.UserRole)
+            for item in self.list.selectedItems()
+            if isinstance(item.data(Qt.ItemDataRole.UserRole), DriveEntry)
+        ]
+        if self.selected_items:
+            self.accept()
+
+    def select_current_folder(self) -> None:
+        if not self.trail or self.trail[-1].shared_with_me:
+            return
+        folder = self.trail[-1]
+        self.selected_items = [
+            DriveEntry(
+                folder.name,
+                folder.folder_id,
+                folder,
+                True,
+            )
+        ]
+        self.accept()
+
+    def reject(self) -> None:
+        if self.thread is not None:
+            self.closing = True
+            self.client.cancel()
+            self.status.setText("Отмена запроса…")
+            self.cancel.setEnabled(False)
+        else:
+            super().reject()
+
+    def closeEvent(self, event) -> None:  # noqa: N802
         if self.thread is not None:
             self.reject()
             event.ignore()

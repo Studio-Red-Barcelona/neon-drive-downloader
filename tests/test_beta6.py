@@ -89,7 +89,7 @@ class Beta6InterfaceTests(unittest.TestCase):
             window.transfer_panels["upload"].start_button.property("colorRole"),
             "upload",
         )
-        self.assertFalse(
+        self.assertTrue(
             window.transfer_panels["download"].direction_toggle_button.isHidden()
         )
         window.force_exit = True
@@ -162,7 +162,7 @@ class Beta6InterfaceTests(unittest.TestCase):
             self.assertEqual(selected, [str(first), str(second)])
             self.assertEqual(
                 window.transfer_panels["upload"].choose_folder_button.text(),
-                "Добавить папки",
+                "Выбрать папки",
             )
             window.force_exit = True
             window.close()

@@ -91,6 +91,7 @@ from .transfer_direction import detect_direction, location_label
 from .drive_browser import (
     DriveClient,
     DriveFolderDialog,
+    DriveItemDialog,
     GoogleDriveAuthError,
     SharedDriveAccessError,
     explorer_shared_drive_target,
@@ -507,6 +508,40 @@ class AnimatedProgressBar(QProgressBar):
         self._animation.setStartValue(self.value())
         self._animation.setEndValue(value)
         self._animation.start()
+
+
+class DropSourceEdit(QPlainTextEdit):
+    """Read-only selection surface that accepts local files and folders."""
+
+    pathsDropped = Signal(list)
+
+    def __init__(self, accept_local_drops: bool, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        self.accept_local_drops = accept_local_drops
+        self.setReadOnly(True)
+        self.setAcceptDrops(accept_local_drops)
+        self.setObjectName("dropSource")
+
+    def dragEnterEvent(self, event) -> None:  # noqa: N802
+        if self.accept_local_drops and event.mimeData().hasUrls():
+            event.acceptProposedAction()
+        else:
+            event.ignore()
+
+    def dragMoveEvent(self, event) -> None:  # noqa: N802
+        if self.accept_local_drops and event.mimeData().hasUrls():
+            event.acceptProposedAction()
+        else:
+            event.ignore()
+
+    def dropEvent(self, event) -> None:  # noqa: N802
+        paths = [url.toLocalFile() for url in event.mimeData().urls() if url.isLocalFile()]
+        paths = [path for path in paths if path and Path(path).exists()]
+        if paths:
+            self.pathsDropped.emit(paths)
+            event.acceptProposedAction()
+        else:
+            event.ignore()
 
 
 class NavigationTabBar(QTabBar):
@@ -1443,20 +1478,20 @@ class ReleaseWelcomeDialog(QDialog):
         layout.addWidget(subtitle)
         if first_launch:
             guide = QLabel(
-                "1. Нажмите «Добавить файлы» или «Добавить папки».\n"
-                "2. Выберите папку назначения. Для Google Drive подключите OAuth2.\n"
-                "3. Выберите профиль и нажмите «Начать передачу»."
+                "1. Подключите Google Drive в настройках.\n"
+                "2. Откройте «Скачать» или «Выгрузить» и выберите файлы.\n"
+                "3. Укажите папку назначения и нажмите одну большую кнопку."
             )
             guide.setWordWrap(True)
             guide.setObjectName("card")
             layout.addWidget(guide)
-        changes_title = QLabel("Что нового в Beta 6")
+        changes_title = QLabel("Что нового в 6.0 Beta 1")
         changes_title.setObjectName("transferTitle")
         changes = QLabel(
-            "• Возвращена настоящая одновременная выгрузка нескольких файлов.\n"
-            "• Google API-запросы распределяются между процессами без ограничения скорости канала.\n"
-            "• Можно выбрать сразу несколько целых папок и передать их одной очередью.\n"
-            "• Этот экран запоминается отдельно для каждой версии и больше не мешает при запуске."
+            "• Полностью новый простой интерфейс в стиле Google Drive.\n"
+            "• Только две основные вкладки: «Скачать» и «Выгрузить».\n"
+            "• Облачный выбор нескольких файлов и папок прямо внутри Neon.\n"
+            "• Компактные настройки без технических параметров Rclone."
         )
         changes.setWordWrap(True)
         layout.addWidget(changes_title)
@@ -1674,7 +1709,9 @@ class MainWindow(QMainWindow):
         self.robocopy_executable = "robocopy.exe"
         self.rclone_executable = rclone_executable_name()
         self.beta_build = is_beta_build(__version__)
-        self.upload_addon_enabled = self.beta_build and upload_addon_installed(__version__)
+        # Generation 6 includes upload as a core workflow.  The old optional
+        # add-on remains readable for upgrades, but it no longer gates the UI.
+        self.upload_addon_enabled = True
         self.advanced_mode_visible = self.settings.value(
             "advanced_mode_visible", False, type=bool
         )
@@ -1730,25 +1767,27 @@ class MainWindow(QMainWindow):
 
     def build_ui(self) -> None:
         self.setWindowTitle(APP_NAME)
-        self.setMinimumSize(900, 640)
+        self.setWindowFlag(Qt.WindowType.WindowMaximizeButtonHint, False)
+        self.setMinimumSize(960, 650)
+        self.setMaximumSize(1360, 900)
         screen = QApplication.primaryScreen()
         available = screen.availableGeometry() if screen is not None else QRect(0, 0, 1280, 800)
         self.resize(
-            min(1280, max(900, int(available.width() * 0.88))),
-            min(850, max(640, int(available.height() * 0.88))),
+            min(1180, max(960, int(available.width() * 0.82))),
+            min(760, max(650, int(available.height() * 0.82))),
         )
         root = QWidget(objectName="root")
         self.setCentralWidget(root)
         shell = QHBoxLayout(root)
-        shell.setContentsMargins(14, 14, 14, 14)
-        shell.setSpacing(18)
+        shell.setContentsMargins(12, 12, 12, 12)
+        shell.setSpacing(14)
 
         self.sidebar = QFrame(objectName="dashboardSidebar")
-        self.sidebar.setMinimumWidth(220)
-        self.sidebar.setMaximumWidth(220)
+        self.sidebar.setMinimumWidth(196)
+        self.sidebar.setMaximumWidth(196)
         sidebar_layout = QVBoxLayout(self.sidebar)
-        sidebar_layout.setContentsMargins(16, 18, 16, 16)
-        sidebar_layout.setSpacing(10)
+        sidebar_layout.setContentsMargins(14, 18, 14, 14)
+        sidebar_layout.setSpacing(9)
 
         brand_row = QHBoxLayout()
         self.sidebar_logo = QLabel("N")
@@ -1769,8 +1808,8 @@ class MainWindow(QMainWindow):
         self.new_transfer_button.setObjectName("newTransferButton")
         self.new_transfer_button.setMinimumHeight(42)
         self.new_transfer_button.clicked.connect(self.open_new_transfer_menu)
-        sidebar_layout.addWidget(self.new_transfer_button)
-        sidebar_layout.addSpacing(8)
+        self.new_transfer_button.hide()
+        sidebar_layout.addSpacing(16)
 
         self.sidebar_navigation = QVBoxLayout()
         self.sidebar_navigation.setSpacing(6)
@@ -1780,8 +1819,8 @@ class MainWindow(QMainWindow):
         content_shell = QWidget()
         outer = QVBoxLayout(content_shell)
         self.outer_layout = outer
-        outer.setContentsMargins(4, 8, 0, 0)
-        outer.setSpacing(12)
+        outer.setContentsMargins(5, 5, 0, 0)
+        outer.setSpacing(10)
 
         header_row = QHBoxLayout()
         self.navigation_toggle_button = QPushButton("≡")
@@ -1789,21 +1828,30 @@ class MainWindow(QMainWindow):
         self.navigation_toggle_button.setFixedSize(36, 36)
         self.navigation_toggle_button.setToolTip("Свернуть боковую панель")
         self.navigation_toggle_button.clicked.connect(self.toggle_navigation_panel)
+        self.navigation_toggle_button.hide()
         header_copy = QVBoxLayout()
         header_copy.setSpacing(1)
-        self.dashboard_title = QLabel("Главная", objectName="dashboardTitle")
+        self.dashboard_title = QLabel("Скачать", objectName="dashboardTitle")
         self.dashboard_subtitle = QLabel(
-            "Общая очередь, выбранная параллельность Rclone и полный контроль скорости",
+            "Файлы и папки из Google Drive на этот компьютер",
             objectName="dashboardSubtitle",
         )
         header_copy.addWidget(self.dashboard_title)
         header_copy.addWidget(self.dashboard_subtitle)
+        self.header_search = QLineEdit()
+        self.header_search.setObjectName("driveSearch")
+        self.header_search.setPlaceholderText("Поиск в выбранном списке")
+        self.header_search.setClearButtonEnabled(True)
+        self.header_search.setMaximumWidth(300)
         self.header_ready_badge = QLabel("● Готово", objectName="headerReadyBadge")
         self.header_version_badge = QLabel(f"beta · {__version__}", objectName="headerVersionBadge")
-        header_row.addWidget(self.navigation_toggle_button)
         header_row.addLayout(header_copy)
         header_row.addStretch()
-        header_row.addWidget(self.header_ready_badge)
+        header_row.addWidget(self.header_search)
+        self.header_account_button = QPushButton("Google Drive")
+        self.header_account_button.setObjectName("accountButton")
+        self.header_account_button.clicked.connect(self.toggle_settings_page)
+        header_row.addWidget(self.header_account_button)
         header_row.addWidget(self.header_version_badge)
         outer.addLayout(header_row)
 
@@ -1812,22 +1860,27 @@ class MainWindow(QMainWindow):
         self.tabs.tabBar().setUsesScrollButtons(False)
         self.download_page = self.build_transfer_tab("download")
         self.upload_page = self.build_transfer_tab("upload")
-        self.home_page = self.build_home_tab()
-        self.download_tab_index = self.tabs.addTab(self.home_page, "Главная")
-        self.upload_tab_index = -1
+        self.header_search.textChanged.connect(
+            lambda _text: self.refresh_source_display(self.active_transfer)
+        )
+        self.home_page = self.download_page
+        self.download_tab_index = self.tabs.addTab(self.download_page, "Скачать")
+        self.upload_tab_index = self.tabs.addTab(self.upload_page, "Выгрузить")
+
+        # Legacy controls are still constructed for settings migration and the
+        # proven transfer engine, but Generation 6 never exposes their pages.
         self.files_page = self.build_files_tab()
         self.files_tab_index = -1
-        if self.files_tab_visible:
-            self.files_tab_index = self.tabs.addTab(self.files_page, "Файлы")
         self.profiles_page = self.build_profiles_tab()
-        self.profiles_tab_index = self.tabs.addTab(self.profiles_page, "Шаблоны")
+        self.profiles_tab_index = -1
         self.interface_settings_page = self.build_interface_tab()
         self.advanced_page = self.build_settings_tab()
-        self.settings_page = self.build_settings_hub()
-        self.settings_tab_index = self.tabs.addTab(self.settings_page, "Настройки")
+        self.legacy_settings_page = self.build_settings_hub()
         self.advanced_tab_index = -1
         self.updates_page = self.build_updates_tab()
-        self.updates_tab_index = self.tabs.addTab(self.updates_page, "Обновления")
+        self.updates_tab_index = -1
+        self.settings_page = self.build_v6_settings_page()
+        self.settings_tab_index = self.tabs.addTab(self.settings_page, "Настройки")
         self.tabs.setTabVisible(self.settings_tab_index, False)
         self._last_tab_index = self.tabs.currentIndex()
         self.tabs.currentChanged.connect(self.animate_tab)
@@ -1839,18 +1892,17 @@ class MainWindow(QMainWindow):
 
         self.sidebar_page_buttons: dict[QWidget, QPushButton] = {}
         self.sidebar_button_specs: list[tuple[QWidget, str, str]] = []
-        self.add_sidebar_page_button(self.home_page, "H", "Главная")
+        self.add_sidebar_page_button(self.download_page, "↓", "Скачать")
+        self.add_sidebar_page_button(self.upload_page, "↑", "Выгрузить")
         self.sidebar_files_button = self.add_sidebar_page_button(
             self.files_page, "↕", "Передачи"
         )
-        self.sidebar_files_button.setVisible(self.files_tab_visible)
-        self.add_sidebar_page_button(self.profiles_page, "P", "Шаблоны")
-        self.add_sidebar_page_button(self.updates_page, "U", "Обновления")
+        self.sidebar_files_button.hide()
 
         system_bar = QVBoxLayout()
         self.system_bar = system_bar
         system_bar.setSpacing(8)
-        self.global_system_status = QLabel("●  СИСТЕМА ГОТОВА")
+        self.global_system_status = QLabel("●  Готово")
         self.global_system_status.setObjectName("systemState")
         self.global_rclone_status = QLabel("Rclone · встроен")
         self.global_rclone_status.setObjectName("footerInfo")
@@ -1906,9 +1958,13 @@ class MainWindow(QMainWindow):
     def update_dashboard_navigation(self, _index: int) -> None:
         page = self.tabs.currentWidget()
         metadata = {
-            self.home_page: (
-                "Главная",
-                "Общая очередь, выбранная параллельность Rclone и полный контроль скорости",
+            self.download_page: (
+                "Скачать",
+                "Файлы и папки из Google Drive на этот компьютер",
+            ),
+            self.upload_page: (
+                "Выгрузить",
+                "Файлы и папки с компьютера в Google Drive",
             ),
             self.files_page: ("Передачи", "Все файлы, направления, скорость и статус"),
             self.profiles_page: (
@@ -1917,7 +1973,7 @@ class MainWindow(QMainWindow):
             ),
             self.settings_page: (
                 "Настройки",
-                "Простые параметры сверху, сложные — в Advanced mode",
+                "Аккаунт, передачи, внешний вид, обновления и диагностика",
             ),
             self.advanced_page: (
                 "Advanced mode",
@@ -2008,16 +2064,12 @@ class MainWindow(QMainWindow):
         return page
 
     def show_transfer_direction(self, direction: str, switch_to_home: bool = True) -> None:
-        if direction == "upload" and not self.upload_addon_enabled:
-            return
         direction = "upload" if direction == "upload" else "download"
         panel = self.bind_transfer_panel(direction)
-        self.home_transfer_stack.setCurrentWidget(panel.page)
-        self.download_direction_button.setChecked(direction == "download")
-        self.upload_direction_button.setChecked(direction == "upload")
-        self.settings.setValue("home_transfer_direction", direction)
-        if switch_to_home and self.tabs.currentWidget() is not self.home_page:
-            self.tabs.setCurrentWidget(self.home_page)
+        target = self.upload_page if direction == "upload" else self.download_page
+        self.settings.setValue("active_tab", direction)
+        if switch_to_home and self.tabs.currentWidget() is not target:
+            self.tabs.setCurrentWidget(target)
         self.update_start_button()
 
     def toggle_transfer_direction(self) -> None:
@@ -2045,7 +2097,9 @@ class MainWindow(QMainWindow):
         form.setContentsMargins(18, 14, 18, 14)
         form.setSpacing(9)
         hero_row = QHBoxLayout()
-        transfer_title = QLabel("Новая передача")
+        transfer_title = QLabel(
+            "Выгрузить в Google Drive" if upload else "Скачать с Google Drive"
+        )
         transfer_title.setObjectName("transferTitle")
         preset_combo = QComboBox()
         preset_combo.addItem("Медленно · минимум нагрузки", "slow")
@@ -2053,23 +2107,39 @@ class MainWindow(QMainWindow):
         preset_combo.addItem("Максимально · весь доступный канал", "maximum")
         preset_combo.addItem("Экстрим · выгрузка чанками 1 ГиБ", "extreme")
         preset_combo.setMinimumWidth(205)
+        preset_combo.hide()
         hero_row.addWidget(transfer_title)
         hero_row.addStretch()
         hero_row.addWidget(preset_combo)
         form.addLayout(hero_row)
 
         sources = QPlainTextEdit()
-        sources.setPlaceholderText("Добавьте файлы, несколько папок или целый диск…")
-        sources.setFixedHeight(58)
+        sources.setPlaceholderText(
+            "Выберите файлы и папки на компьютере…"
+            if upload else "Выберите файлы и папки в Google Drive…"
+        )
+        sources.setReadOnly(True)
+        sources.setFixedHeight(72)
+        source_display = DropSourceEdit(upload)
+        source_display.setPlaceholderText(sources.placeholderText())
+        source_display.setFixedHeight(72)
+        if upload:
+            source_display.pathsDropped.connect(
+                lambda paths, selected=direction: self._append_sources_for(selected, paths)
+            )
         source_buttons = QGridLayout()
         source_buttons.setContentsMargins(0, 0, 0, 0)
-        choose_files_button = QPushButton("Выбрать файлы")
+        choose_files_button = QPushButton(
+            "Выбрать файлы" if upload else "Открыть Google Drive"
+        )
         choose_files_button.setProperty("colorRole", "download")
         choose_files_button.setToolTip("Выбрать один или несколько файлов через Проводник")
         choose_files_button.clicked.connect(
             lambda _checked=False, selected=direction: self.choose_files_for(selected)
         )
-        choose_folder_button = QPushButton("Добавить папки")
+        choose_folder_button = QPushButton(
+            "Выбрать папки" if upload else "Выбрать папку в Drive"
+        )
         choose_folder_button.setProperty("colorRole", "folder")
         choose_folder_button.setToolTip(
             "Выбрать одну или несколько целых папок либо корень подключённого диска"
@@ -2087,20 +2157,32 @@ class MainWindow(QMainWindow):
         choose_file_button.clicked.connect(
             lambda _checked=False, selected=direction: self.choose_single_file_for(selected)
         )
-        choose_files_button.setText("Добавить файлы")
+        choose_file_button.setVisible(upload)
+        choose_files_button.setText("Добавить файлы" if upload else "Выбрать в Google Drive")
         source_buttons.addWidget(choose_file_button, 0, 0)
         source_buttons.addWidget(choose_files_button, 0, 1, 1, 2)
         source_buttons.addWidget(choose_folder_button, 1, 0, 1, 2)
         source_buttons.addWidget(clear_button, 1, 2)
+        if not upload:
+            source_buttons.removeWidget(choose_files_button)
+            source_buttons.removeWidget(clear_button)
+            source_buttons.addWidget(choose_files_button, 0, 0, 1, 2)
+            source_buttons.addWidget(clear_button, 0, 2)
+            choose_folder_button.hide()
         source_buttons.setColumnStretch(0, 1)
         source_buttons.setColumnStretch(1, 1)
 
         destination_row = QHBoxLayout()
         destination = QLineEdit()
         destination.setPlaceholderText(
-            "G:\\Мой диск (или Mi unidad)" if upload else "D:\\Downloads\\Google Drive"
+            "Выберите папку в Google Drive" if upload else "Папка на компьютере"
         )
+        destination.setReadOnly(True)
         destination.setMinimumHeight(58)
+        destination_display = QLineEdit()
+        destination_display.setReadOnly(True)
+        destination_display.setPlaceholderText(destination.placeholderText())
+        destination_display.setMinimumHeight(58)
         browse_button = QPushButton("…")
         browse_button.setFixedWidth(42)
         browse_button.clicked.connect(
@@ -2119,9 +2201,9 @@ class MainWindow(QMainWindow):
         google_drive_button.setToolTip(
             "Сначала выбрать конечную папку в Проводнике, затем использовать Neon Rclone"
         )
-        google_drive_button.setVisible(upload)
+        google_drive_button.setVisible(False)
         google_drive_button.clicked.connect(self.use_or_connect_google_drive)
-        destination_row.addWidget(destination, 1)
+        destination_row.addWidget(destination_display, 1)
         destination_row.addWidget(browse_button)
         destination_row.addWidget(show_destination_button)
 
@@ -2129,12 +2211,12 @@ class MainWindow(QMainWindow):
         path_grid.setHorizontalSpacing(16)
         path_grid.setVerticalSpacing(6)
         source_heading_label = self.label(
-            "ОТКУДА · ФИЗИЧЕСКИЙ ДИСК" if upload else "ОТКУДА · СЕТЕВОЙ ДИСК"
+            "С КОМПЬЮТЕРА" if upload else "ИЗ GOOGLE DRIVE"
         )
         path_grid.addWidget(source_heading_label, 0, 0)
         destination_heading = QHBoxLayout()
         destination_heading_label = self.label(
-            "КУДА · СЕТЕВОЙ ДИСК" if upload else "КУДА · ФИЗИЧЕСКИЙ ДИСК"
+            "В GOOGLE DRIVE" if upload else "НА КОМПЬЮТЕР"
         )
         destination_heading.addWidget(destination_heading_label, 1)
         destination_heading.addWidget(google_drive_button)
@@ -2147,8 +2229,9 @@ class MainWindow(QMainWindow):
         )
         direction_toggle_button.setEnabled(upload or self.upload_addon_enabled)
         direction_toggle_button.clicked.connect(self.toggle_transfer_direction)
+        direction_toggle_button.hide()
         path_grid.addWidget(direction_toggle_button, 0, 1, Qt.AlignmentFlag.AlignCenter)
-        path_grid.addWidget(sources, 1, 0)
+        path_grid.addWidget(source_display, 1, 0)
         arrow = QLabel("→", objectName="transferArrow")
         arrow.setAlignment(Qt.AlignmentFlag.AlignCenter)
         path_grid.addWidget(arrow, 1, 1)
@@ -2158,7 +2241,7 @@ class MainWindow(QMainWindow):
         source_actions = QWidget()
         source_actions.setLayout(source_buttons)
         path_grid.addWidget(source_actions, 2, 0)
-        start_button = QPushButton("Начать передачу")
+        start_button = QPushButton("Выгрузить" if upload else "Скачать")
         start_button.setObjectName("primary")
         start_button.setProperty("colorRole", "upload" if upload else "download")
         start_button.setMinimumHeight(42)
@@ -2174,6 +2257,7 @@ class MainWindow(QMainWindow):
             "Приостановить текущие процессы без потери сессии; повторное нажатие продолжит с того же места"
         )
         visible_stop.setEnabled(False)
+        visible_stop.hide()
         visible_stop.clicked.connect(self.toggle_resumable_stop)
         transfer_actions.addWidget(visible_stop, 1, 0)
         hard_stop = QPushButton("Полностью остановить")
@@ -2182,6 +2266,7 @@ class MainWindow(QMainWindow):
             "Немедленно отменить очередь и закрыть все процессы Rclone/Robocopy этой передачи"
         )
         hard_stop.setEnabled(False)
+        hard_stop.hide()
         hard_stop.clicked.connect(self.stop_now)
         transfer_actions.addWidget(hard_stop, 1, 1)
         transfer_actions.setColumnStretch(0, 1)
@@ -2190,7 +2275,10 @@ class MainWindow(QMainWindow):
         path_grid.setColumnStretch(0, 5)
         path_grid.setColumnStretch(2, 5)
         form.addLayout(path_grid)
-        route_note = QLabel("Выберите источник и назначение.", objectName="settingDescription")
+        route_note = QLabel(
+            "Neon автоматически проверит файлы и продолжит незавершённую передачу.",
+            objectName="settingDescription",
+        )
         route_note.setWordWrap(True)
         def update_route_note() -> None:
             source_items = [line.strip() for line in sources.toPlainText().splitlines() if line.strip()]
@@ -2198,15 +2286,11 @@ class MainWindow(QMainWindow):
                 source_items,
                 destination.text(),
             )
-            if source_items:
-                source_labels = {location_label(item) for item in source_items}
-                source_heading_label.setText(
-                    "ОТКУДА · " + (next(iter(source_labels)) if len(source_labels) == 1 else "СМЕШАННЫЕ ПУТИ")
-                )
-            if destination.text().strip():
-                destination_heading_label.setText("КУДА · " + location_label(destination.text()))
             selected_label = str(self.settings.value("cloud_label/" + destination.text(), ""))
-            route_note.setText("Прямая выгрузка → " + selected_label if selected_label else description)
+            if selected_label:
+                route_note.setText("Папка Google Drive: " + selected_label)
+            elif source_items and destination.text().strip():
+                route_note.setText("Готово к передаче · " + description)
         sources.textChanged.connect(update_route_note)
         destination.textChanged.connect(update_route_note)
         form.addWidget(route_note)
@@ -2214,7 +2298,7 @@ class MainWindow(QMainWindow):
 
         terminal_card = self.card()
         terminal_card.setObjectName("terminalCard")
-        terminal_card.setVisible(self.advanced_mode_visible)
+        terminal_card.setVisible(False)
         terminal_layout = QVBoxLayout(terminal_card)
         terminal_layout.setContentsMargins(16, 12, 16, 13)
         terminal_layout.addWidget(self.label("LIVE TERMINAL"))
@@ -2248,6 +2332,9 @@ class MainWindow(QMainWindow):
         file_mode_label = QLabel("0 активных")
         file_mode_label.setObjectName("fileStatus")
         files_header.addWidget(file_mode_label)
+        transfer_drawer_button = QPushButton("Свернуть")
+        transfer_drawer_button.setObjectName("drawerButton")
+        files_header.addWidget(transfer_drawer_button)
         files_layout.addLayout(files_header)
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
@@ -2260,6 +2347,12 @@ class MainWindow(QMainWindow):
             file_list_layout.setColumnStretch(column, 1)
         scroll.setWidget(file_list_widget)
         files_layout.addWidget(scroll, 1)
+        transfer_drawer_button.clicked.connect(
+            lambda _checked=False, area=scroll, button=transfer_drawer_button: (
+                area.setVisible(not area.isVisible()),
+                button.setText("Свернуть" if area.isVisible() else "Развернуть"),
+            )
+        )
 
         status_card = self.card()
         status_card.setObjectName("statusCard")
@@ -2268,12 +2361,13 @@ class MainWindow(QMainWindow):
         status_layout.setContentsMargins(18, 14, 18, 14)
         status_layout.setSpacing(4)
         performance_header = QHBoxLayout()
-        performance_header.addWidget(QLabel("Производительность", objectName="sectionTitle"))
+        performance_header.addWidget(QLabel("Состояние", objectName="sectionTitle"))
         performance_header.addStretch()
         rclone_monitor_button = QPushButton("Rclone ↗")
         rclone_monitor_button.setProperty("colorRole", "monitor")
         rclone_monitor_button.setToolTip("Открыть отдельное окно графика и терминала Rclone")
         rclone_monitor_button.clicked.connect(self.show_rclone_monitor)
+        rclone_monitor_button.hide()
         performance_header.addWidget(rclone_monitor_button)
         speed = QLabel("—", objectName="speed")
         status_layout.addLayout(performance_header)
@@ -2283,14 +2377,17 @@ class MainWindow(QMainWindow):
         graph_selector.setToolTip(
             "Общий график или история скорости отдельного файла; история остаётся после завершения"
         )
+        graph_selector.hide()
         status_layout.addWidget(graph_selector)
         speed_graph = SpeedGraph()
         speed_graph.setMinimumHeight(32)
         speed_graph.setMaximumHeight(70)
+        speed_graph.hide()
         status_layout.addWidget(speed_graph)
         transfer_stats_label = QLabel("Передано 0.0 Б · за 1 день")
         transfer_stats_label.setObjectName("transferStats")
         transfer_stats_label.setWordWrap(True)
+        transfer_stats_label.hide()
         status_layout.addWidget(transfer_stats_label)
         ring_row = QHBoxLayout()
         ring = Ring()
@@ -2332,6 +2429,7 @@ class MainWindow(QMainWindow):
         recent_empty = QLabel("Завершённые и проверенные передачи появятся здесь")
         recent_empty.setObjectName("settingDescription")
         recent_layout.addWidget(recent_empty)
+        recent_card.hide()
         page_layout.addWidget(recent_card)
         page_layout.addWidget(terminal_card)
 
@@ -2364,6 +2462,8 @@ class MainWindow(QMainWindow):
             footer_info=footer_info,
         )
         self.transfer_panels[direction] = panel
+        panel.source_display = source_display
+        panel.destination_display = destination_display
         panel.google_drive_button = google_drive_button
         panel.direction_toggle_button = direction_toggle_button
         panel.speed_graph = speed_graph
@@ -2377,10 +2477,18 @@ class MainWindow(QMainWindow):
         panel.recent_card = recent_card
         panel.transfer_stats_label = transfer_stats_label
         panel.rclone_monitor_button = rclone_monitor_button
+        panel.transfer_drawer_button = transfer_drawer_button
+        panel.transfer_scroll = scroll
         preset_combo.currentIndexChanged.connect(
             lambda _index, selected=preset_combo: self.apply_transfer_preset(
                 str(selected.currentData() or "optimal")
             )
+        )
+        sources.textChanged.connect(
+            lambda selected=direction: self.refresh_source_display(selected)
+        )
+        destination.textChanged.connect(
+            lambda _text, selected=direction: self.refresh_destination_display(selected)
         )
         if direction == "download":
             self.sources = sources
@@ -3096,6 +3204,126 @@ class MainWindow(QMainWindow):
         self.show_settings_section("rclone")
         return page
 
+    def build_v6_settings_page(self) -> QWidget:
+        """Small Generation 6 settings page; technical tuning stays internal."""
+        page = QWidget(objectName="v6SettingsPage")
+        layout = QVBoxLayout(page)
+        layout.setContentsMargins(0, 4, 0, 4)
+        layout.setSpacing(12)
+
+        heading = QHBoxLayout()
+        title_box = QVBoxLayout()
+        title_box.setSpacing(2)
+        title_box.addWidget(QLabel("Основные параметры", objectName="settingsTitle"))
+        subtitle = QLabel(
+            "Только основные параметры. Скорость, чанки и повторы Neon подбирает автоматически.",
+            objectName="dashboardSubtitle",
+        )
+        subtitle.setWordWrap(True)
+        title_box.addWidget(subtitle)
+        heading.addLayout(title_box, 1)
+        back = QPushButton("Готово")
+        back.setObjectName("primarySmall")
+        back.clicked.connect(self.toggle_settings_page)
+        heading.addWidget(back)
+        layout.addLayout(heading)
+
+        content = QWidget()
+        grid = QGridLayout(content)
+        grid.setContentsMargins(0, 0, 4, 0)
+        grid.setHorizontalSpacing(12)
+        grid.setVerticalSpacing(12)
+
+        account_card, account_box = self.settings_section("GOOGLE DRIVE")
+        account_header = QHBoxLayout()
+        account_header.addWidget(QLabel("Подключённый аккаунт", objectName="sectionTitle"))
+        account_header.addStretch()
+        account_header.addWidget(self.google_drive_status)
+        account_box.addLayout(account_header)
+        account_box.addWidget(self.google_account_combo)
+        account_box.addWidget(self.google_account_identity)
+        account_kind_row = QHBoxLayout()
+        account_kind_row.addWidget(QLabel("Тип нового аккаунта"))
+        account_kind_row.addWidget(self.google_account_kind_combo, 1)
+        account_box.addLayout(account_kind_row)
+        account_actions = QHBoxLayout()
+        account_actions.addWidget(self.google_drive_add_button)
+        account_actions.addWidget(self.google_drive_connect_button)
+        account_actions.addWidget(self.google_drive_disconnect_button)
+        account_box.addLayout(account_actions)
+        grid.addWidget(account_card, 0, 0)
+
+        transfer_card, transfer_box = self.settings_section("ПЕРЕДАЧИ")
+        transfer_box.addWidget(QLabel("Одновременная обработка"))
+        transfer_box.addWidget(self.download_mode_combo)
+        transfer_box.addWidget(self.concurrency_controls)
+        folder_row = QHBoxLayout()
+        self.v6_download_folder = QLineEdit()
+        self.v6_download_folder.setReadOnly(True)
+        self.v6_download_folder.setPlaceholderText("Папка скачивания")
+        choose_download_folder = QPushButton("Изменить")
+        choose_download_folder.clicked.connect(
+            lambda _checked=False: self.choose_destination_for("download")
+        )
+        folder_row.addWidget(self.v6_download_folder, 1)
+        folder_row.addWidget(choose_download_folder)
+        transfer_box.addWidget(QLabel("Папка скачивания по умолчанию"))
+        transfer_box.addLayout(folder_row)
+        self.transfer_panels["download"].destination.textChanged.connect(
+            self.v6_download_folder.setText
+        )
+        transfer_box.addWidget(self.continue_in_tray_check.setting_container)
+        transfer_box.addWidget(self.notifications_check.setting_container)
+        grid.addWidget(transfer_card, 0, 1)
+
+        appearance_card, appearance_box = self.settings_section("ВНЕШНИЙ ВИД")
+        appearance_box.addWidget(QLabel("Тема"))
+        appearance_box.addWidget(self.theme_combo)
+        appearance_box.addWidget(self.automatic_theme_note)
+        appearance_box.addWidget(self.animations_check.setting_container)
+        appearance_note = QLabel(
+            "Окно открывается в компактном размере и запоминает своё положение.",
+            objectName="settingDescription",
+        )
+        appearance_note.setWordWrap(True)
+        appearance_box.addWidget(appearance_note)
+        grid.addWidget(appearance_card, 1, 0)
+
+        behavior_card, behavior_box = self.settings_section("ПРИЛОЖЕНИЕ")
+        behavior_box.addWidget(self.windows_startup_check.setting_container)
+        behavior_box.addWidget(self.tray_check.setting_container)
+        behavior_box.addWidget(self.auto_system_health_check.setting_container)
+        behavior_box.addWidget(QLabel("Обновления"))
+        behavior_box.addWidget(self.update_mode_combo)
+        behavior_box.addWidget(self.update_status)
+        update_actions = QHBoxLayout()
+        update_actions.addWidget(self.check_update_button)
+        update_actions.addWidget(self.install_update_button)
+        behavior_box.addLayout(update_actions)
+        grid.addWidget(behavior_card, 1, 1)
+
+        health_card, health_box = self.settings_section("ДИАГНОСТИКА")
+        health_header = QHBoxLayout()
+        health_header.addWidget(self.system_health_status, 1)
+        health_header.addWidget(self.system_health_button)
+        health_box.addLayout(health_header)
+        health_box.addWidget(self.system_health_progress)
+        health_box.addWidget(self.system_health_summary)
+        logs = QPushButton("Открыть журналы")
+        logs.clicked.connect(self.open_logs)
+        health_box.addWidget(logs, 0, Qt.AlignmentFlag.AlignLeft)
+        grid.addWidget(health_card, 2, 0, 1, 2)
+
+        grid.setColumnStretch(0, 1)
+        grid.setColumnStretch(1, 1)
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.Shape.NoFrame)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        scroll.setWidget(content)
+        layout.addWidget(scroll, 1)
+        return page
+
     def show_settings_section(self, section: str) -> None:
         if section == "updates" and hasattr(self, "updates_page"):
             self.tabs.setCurrentWidget(self.updates_page)
@@ -3493,9 +3721,9 @@ class MainWindow(QMainWindow):
     def toggle_settings_page(self) -> None:
         """Open settings from the compact bottom gear without exposing a tab."""
         if self.tabs.currentWidget() is self.settings_page:
-            page = getattr(self, "_page_before_settings", self.home_page)
+            page = getattr(self, "_page_before_settings", self.download_page)
             if self.tabs.indexOf(page) < 0 or page is self.settings_page:
-                page = self.home_page
+                page = self.download_page
             self.tabs.setCurrentWidget(page)
             self.settings_gear_button.setToolTip("Настройки Neon Drive")
             return
@@ -3916,7 +4144,13 @@ class MainWindow(QMainWindow):
             #sidebarBrand {{ color: {colors['text']}; font-size: 19px; font-weight: 850; }}
             #sidebarVersion {{ color: {colors['muted']}; font-size: 10px; }}
             #dashboardTitle {{ color: {colors['text']}; font-size: {metrics['title']}px; font-weight: 850; }}
+            #settingsTitle {{ color: {colors['text']}; font-size: {metrics['title']}px; font-weight: 850; }}
             #dashboardSubtitle {{ color: {colors['muted']}; font-size: 12px; }}
+            #driveSearch {{ border-radius: 20px; min-height: 24px; padding-left: 15px; }}
+            #dropSource {{ border: 1px dashed {accent}; border-radius: 12px; padding: 10px; }}
+            #accountButton {{ background: {colors['card']}; color: {accent}; border: 1px solid {colors['border']}; border-radius: 18px; padding: 7px 14px; }}
+            #accountButton:hover {{ background: {selected_surface}; border-color: {accent}; }}
+            #drawerButton {{ background: transparent; color: {accent}; border-color: transparent; }}
             #headerReadyBadge {{ color: {accent}; border: 1px solid {accent}; border-radius: 16px; padding: 7px 18px; font-weight: 700; }}
             #headerVersionBadge {{ color: {colors['muted']}; background: {colors['button']}; border: 1px solid {colors['border']}; border-radius: 16px; padding: 7px 18px; }}
             #newTransferButton {{ background: {accent}; color: {accent_text}; border-color: {accent}; text-align: center; font-weight: 800; }}
@@ -4110,19 +4344,20 @@ class MainWindow(QMainWindow):
         saved_geometry = self.settings.value("window_geometry")
         if saved_geometry and dashboard_migrated:
             self.restoreGeometry(saved_geometry)
-        self.should_restore_maximized = (
-            self.settings.value("window_maximized", False, type=bool)
-            if dashboard_migrated
-            else False
-        )
+        self.should_restore_maximized = False
         old_parallel = self.settings.value("parallel_downloads", False, type=bool)
+        if not self.settings.value("interface_v6_migrated", False, type=bool):
+            self.settings.setValue("theme", "google_drive")
+            self.settings.setValue("design_mode", "compact")
+            self.settings.setValue("files_tab_visible", False)
+            self.settings.setValue("window_size_mode", "standard")
+            self.settings.setValue("active_tab", "download")
+            self.settings.setValue("interface_v6_migrated", True)
         self.advanced_mode_check.setChecked(
-            self.settings.value("advanced_mode_visible", False, type=bool)
+            False
         )
         self.files_tab_check.setChecked(
-            self.settings.value("files_tab_visible", True, type=bool)
-            if dashboard_migrated
-            else True
+            False
         )
         stored_navigation_mode = self.settings.value("navigation_mode", "side")
         if not self.settings.value("interface_v55_migrated", False, type=bool):
@@ -4193,7 +4428,7 @@ class MainWindow(QMainWindow):
         )
         select(
             self.theme_combo,
-            self.settings.value("theme", "dark") if dashboard_migrated else "dark",
+            self.settings.value("theme", "google_drive") if dashboard_migrated else "google_drive",
         )
         select(self.design_mode_combo, self.settings.value("design_mode", "compact"))
         stored_accent = str(self.settings.value("accent_color", "#00e8f5"))
@@ -4341,7 +4576,7 @@ class MainWindow(QMainWindow):
         self.settings.setValue("google_drive_route", self.google_route_combo.currentData())
         self.settings.setValue("drive_chunk_mib", self.drive_chunk_combo.currentData())
         self.settings.setValue("window_geometry", self.saveGeometry())
-        self.settings.setValue("window_maximized", self.isMaximized())
+        self.settings.setValue("window_maximized", False)
         self.settings.setValue("active_tab", self.tab_key(self.tabs.currentWidget()))
         self.settings.setValue("advanced_mode_visible", self.advanced_mode_check.isChecked())
         self.settings.setValue("files_tab_visible", self.files_tab_check.isChecked())
@@ -4552,8 +4787,8 @@ class MainWindow(QMainWindow):
             if screen is not None:
                 available = screen.availableGeometry()
                 self.resize(
-                    min(1280, max(self.minimumWidth(), int(available.width() * 0.88))),
-                    min(850, max(self.minimumHeight(), int(available.height() * 0.88))),
+                    min(1180, max(self.minimumWidth(), int(available.width() * 0.82))),
+                    min(760, max(self.minimumHeight(), int(available.height() * 0.82))),
                 )
             return
         if mode in WINDOW_SIZE_PRESETS:
@@ -4650,11 +4885,11 @@ class MainWindow(QMainWindow):
     def apply_navigation_layout(self, animate: bool = False) -> None:
         if not hasattr(self, "sidebar") or not hasattr(self, "tabs"):
             return
-        mode = str(self.navigation_mode_combo.currentData() or "side")
         self.tabs.tabBar().hide()
-        self.navigation_toggle_button.show()
-        expanded = self.sidebar_expanded and mode != "side_compact"
-        self.set_navigation_panel_expanded(expanded, animate=animate)
+        self.navigation_toggle_button.hide()
+        self.sidebar_expanded = True
+        self.sidebar.setMinimumWidth(196)
+        self.sidebar.setMaximumWidth(196)
 
     def set_navigation_panel_expanded(self, expanded: bool, animate: bool = True) -> None:
         if not hasattr(self, "sidebar"):
@@ -4672,7 +4907,7 @@ class MainWindow(QMainWindow):
         if self.sidebar_animation is not None:
             self.sidebar_animation.stop()
         start_width = self.sidebar.width()
-        end_width = 220 if expanded else 66
+        end_width = 196 if expanded else 66
         self.sidebar.setMinimumWidth(66)
         self.sidebar_brand.setVisible(expanded)
         self.sidebar_version.setVisible(expanded)
@@ -4704,15 +4939,16 @@ class MainWindow(QMainWindow):
     def set_advanced_mode_visible(self, visible: bool) -> None:
         if not hasattr(self, "advanced_page"):
             return
-        self.advanced_mode_visible = bool(visible)
+        self.advanced_mode_visible = False
         self.advanced_tab_index = -1
         self.refresh_tab_indexes()
         for panel in self.transfer_panels.values():
-            panel.terminal_card.setVisible(bool(visible))
+            panel.terminal_card.setVisible(False)
 
     def refresh_tab_indexes(self) -> None:
         for attribute, page_attribute in (
-            ("download_tab_index", "home_page"),
+            ("download_tab_index", "download_page"),
+            ("upload_tab_index", "upload_page"),
             ("files_tab_index", "files_page"),
             ("profiles_tab_index", "profiles_page"),
             ("settings_tab_index", "settings_page"),
@@ -4721,11 +4957,11 @@ class MainWindow(QMainWindow):
         ):
             page = getattr(self, page_attribute, None)
             setattr(self, attribute, self.tabs.indexOf(page) if page is not None else -1)
-        self.upload_tab_index = -1
 
     def tab_key(self, page: QWidget | None) -> str:
         for key, candidate in (
-            ("home", self.home_page),
+            ("download", self.download_page),
+            ("upload", self.upload_page),
             ("files", self.files_page),
             ("profiles", self.profiles_page),
             ("settings", self.settings_page),
@@ -4734,7 +4970,7 @@ class MainWindow(QMainWindow):
         ):
             if page is candidate:
                 return key
-        return "home"
+        return "download"
 
     @Slot(int)
     def remember_active_tab(self, index: int) -> None:
@@ -4743,29 +4979,25 @@ class MainWindow(QMainWindow):
         self.settings.setValue("active_tab", self.tab_key(self.tabs.widget(index)))
 
     def restore_active_tab(self) -> None:
-        key = str(self.settings.value("active_tab", "home") or "home")
+        key = str(self.settings.value("active_tab", "download") or "download")
         pages = {
-            "home": self.home_page,
-            "download": self.home_page,
-            "upload": self.home_page,
+            "home": self.download_page,
+            "download": self.download_page,
+            "upload": self.upload_page,
             "files": self.files_page,
             "profiles": self.profiles_page,
             "settings": self.settings_page,
             "advanced": self.advanced_page,
             "updates": self.updates_page,
         }
-        page = pages.get(key, self.home_page)
+        page = pages.get(key, self.download_page)
         if self.tabs.indexOf(page) < 0:
-            page = self.settings_page if key in ("files", "advanced") else self.home_page
+            page = self.settings_page if key in ("files", "advanced") else self.download_page
         self.tabs.setCurrentWidget(page)
-        if page is self.home_page:
-            direction = str(
-                self.settings.value(
-                    "home_transfer_direction",
-                    "upload" if key == "upload" else "download",
-                )
-            )
-            self.show_transfer_direction(direction, switch_to_home=False)
+        if page is self.download_page:
+            self.bind_transfer_panel("download")
+        elif page is self.upload_page:
+            self.bind_transfer_panel("upload")
         self.settings.setValue("active_tab", self.tab_key(page))
         if hasattr(self, "settings_gear_button") and page is self.settings_page:
             self.settings_gear_button.setToolTip("Вернуться к передаче")
@@ -4952,6 +5184,13 @@ class MainWindow(QMainWindow):
             "Переподключить выбранный" if connected else "Сначала добавьте аккаунт"
         )
         self.google_drive_disconnect_button.setEnabled(connected and not busy)
+        if hasattr(self, "header_account_button"):
+            self.header_account_button.setText(
+                active.email if connected and active and active.email else "Подключить Google Drive"
+            )
+            self.header_account_button.setToolTip(
+                "Открыть настройки аккаунта" if connected else "Подключить Google Drive"
+            )
         upload_button = getattr(self.transfer_panels.get("upload"), "google_drive_button", None)
         if upload_button is not None:
             upload_button.setText("Google Drive ✓" if connected else "Google Drive")
@@ -5424,14 +5663,10 @@ class MainWindow(QMainWindow):
         if self.running:
             return
         page = self.tabs.widget(index)
-        if page is self.home_page:
-            direction = (
-                "upload"
-                if self.home_transfer_stack.currentWidget() is self.upload_page
-                and self.upload_addon_enabled
-                else "download"
-            )
-            self.bind_transfer_panel(direction)
+        if page is self.download_page:
+            self.bind_transfer_panel("download")
+        elif page is self.upload_page:
+            self.bind_transfer_panel("upload")
         else:
             return
         self.update_start_button()
@@ -5439,7 +5674,11 @@ class MainWindow(QMainWindow):
     def update_start_button(self) -> None:
         for direction, panel in self.transfer_panels.items():
             resumable = self.running and self.paused and direction == self.active_transfer
-            panel.start_button.setText("Продолжить" if resumable else "Начать передачу")
+            panel.start_button.setText(
+                "Продолжить"
+                if resumable
+                else ("Выгрузить" if direction == "upload" else "Скачать")
+            )
             panel.start_button.setProperty(
                 "colorRole", "download" if resumable else ("upload" if direction == "upload" else "download")
             )
@@ -5553,7 +5792,44 @@ class MainWindow(QMainWindow):
 
     def choose_destination_for(self, direction: str) -> bool:
         panel = self.transfer_panels[direction]
-        title = "Выберите папку на Google Drive" if direction == "upload" else "Выберите папку"
+        if direction == "upload":
+            if not self.google_drive_is_connected():
+                QMessageBox.information(
+                    self,
+                    APP_NAME,
+                    "Сначала подключите Google Drive в настройках.",
+                )
+                self.toggle_settings_page()
+                return False
+            executable = self.resolved_rclone_executable()
+            if not executable:
+                QMessageBox.warning(self, APP_NAME, "Встроенный Rclone не найден.")
+                return False
+            dialog = DriveFolderDialog(
+                executable,
+                panel.destination.text().strip(),
+                self,
+                remote_name=self.active_google_remote(),
+            )
+            self.cloud_browser = dialog
+            try:
+                accepted = dialog.exec() == QDialog.DialogCode.Accepted
+            finally:
+                self.cloud_browser = None
+            if not accepted or dialog.selected_folder is None:
+                return False
+            folder = dialog.selected_folder
+            panel.destination.setText(folder.remote)
+            panel.destination.setToolTip(folder.label)
+            self.settings.setValue("cloud_label/" + folder.remote, folder.label)
+            self.settings.setValue("upload_destination", folder.remote)
+            self.refresh_destination_display("upload")
+            rclone_index = self.copy_engine_combo.findData("rclone")
+            if rclone_index >= 0:
+                self.copy_engine_combo.setCurrentIndex(rclone_index)
+            self.persist_settings()
+            return True
+        title = "Выберите папку на компьютере"
         start = panel.destination.text()
         if is_rclone_remote_path(start):
             start = str(self.settings.value(f"google_explorer_destination/{direction}", ""))
@@ -5727,10 +6003,42 @@ class MainWindow(QMainWindow):
                 seen.add(normalized)
         panel.sources.setPlainText("\n".join(existing))
 
+    def refresh_source_display(self, direction: str) -> None:
+        panel = self.transfer_panels.get(direction)
+        if panel is None or not hasattr(panel, "source_display"):
+            return
+        labels: list[str] = []
+        for source in panel.sources.toPlainText().splitlines():
+            source = source.strip()
+            if not source:
+                continue
+            cloud_label = str(self.settings.value("cloud_label/" + source, "") or "")
+            if cloud_label:
+                labels.append(("📁  " if self.source_directory_flags.get(source) else "📄  ") + cloud_label)
+            else:
+                name = Path(source).name or source
+                labels.append(("📁  " if Path(source).is_dir() else "📄  ") + name)
+        query = self.header_search.text().strip().casefold() if hasattr(self, "header_search") else ""
+        if query:
+            labels = [label for label in labels if query in label.casefold()]
+        panel.source_display.setPlainText("\n".join(labels))
+
+    def refresh_destination_display(self, direction: str) -> None:
+        panel = self.transfer_panels.get(direction)
+        if panel is None or not hasattr(panel, "destination_display"):
+            return
+        value = panel.destination.text().strip()
+        label = str(self.settings.value("cloud_label/" + value, "") or "")
+        panel.destination_display.setText(label or value)
+        panel.destination_display.setToolTip(value if label else "")
+
     def _append_sources(self, paths: list[str]) -> None:
         self._append_sources_for("download", paths)
 
     def choose_files_for(self, direction: str) -> None:
+        if direction == "download":
+            self.choose_google_drive_items(replace=False)
+            return
         key = "last_upload_source_dir" if direction == "upload" else "last_source_dir"
         start = self.settings.value(key, "")
         files, _ = QFileDialog.getOpenFileNames(self, "Выберите файлы", start, "Все файлы (*)")
@@ -5742,6 +6050,9 @@ class MainWindow(QMainWindow):
 
     def choose_single_file_for(self, direction: str) -> None:
         if self.running:
+            return
+        if direction == "download":
+            self.choose_google_drive_items(replace=True)
             return
         key = "last_upload_source_dir" if direction == "upload" else "last_source_dir"
         selected, _ = QFileDialog.getOpenFileName(
@@ -5757,6 +6068,9 @@ class MainWindow(QMainWindow):
         self.choose_files_for("download")
 
     def choose_source_folder_for(self, direction: str) -> None:
+        if direction == "download":
+            self.choose_google_drive_items(replace=False)
+            return
         key = "last_upload_source_dir" if direction == "upload" else "last_source_dir"
         start = str(self.settings.value(key, "") or "")
         folders = select_source_folders(self, start)
@@ -5765,6 +6079,48 @@ class MainWindow(QMainWindow):
             self._append_sources_for(direction, folders)
             if direction == "download":
                 self.maybe_auto_start()
+
+    def choose_google_drive_items(self, replace: bool = False) -> None:
+        if self.running:
+            return
+        if not self.google_drive_is_connected():
+            QMessageBox.information(
+                self,
+                APP_NAME,
+                "Подключите Google Drive, чтобы увидеть облачные файлы и папки.",
+            )
+            self.toggle_settings_page()
+            return
+        executable = self.resolved_rclone_executable()
+        if not executable:
+            QMessageBox.warning(
+                self,
+                APP_NAME,
+                "Встроенный Rclone не найден. Запустите проверку системы в настройках.",
+            )
+            return
+        dialog = DriveItemDialog(
+            executable,
+            self,
+            remote_name=self.active_google_remote(),
+        )
+        self.cloud_browser = dialog
+        try:
+            accepted = dialog.exec() == QDialog.DialogCode.Accepted
+        finally:
+            self.cloud_browser = None
+        if not accepted:
+            return
+        paths = [entry.remote for entry in dialog.selected_items]
+        for entry in dialog.selected_items:
+            self.source_directory_flags[entry.remote] = entry.is_directory
+            self.settings.setValue("cloud_label/" + entry.remote, entry.label)
+        if replace:
+            self.transfer_panels["download"].sources.setPlainText("\n".join(paths))
+        else:
+            self._append_sources_for("download", paths)
+        self.settings.setValue("sources", self.transfer_panels["download"].sources.toPlainText())
+        self.settings.sync()
 
     def show_release_welcome_once(self) -> bool:
         if "--smoke-test" in sys.argv:
@@ -5830,6 +6186,7 @@ class MainWindow(QMainWindow):
                 self.show_source_links_check.isChecked(),
                 self.show_destination_links_check.isChecked(),
             )
+            self.apply_friendly_row_labels(row, source, destination)
             try:
                 size = Path(source).stat().st_size if Path(source).is_file() else 0
             except OSError:
@@ -5844,6 +6201,21 @@ class MainWindow(QMainWindow):
             panel.file_list_layout.addWidget(empty, 0, 0, 1, 3)
         if self.files_tab_visible:
             self.refresh_files_overview()
+
+    def apply_friendly_row_labels(
+        self, row: FileRow, source: str, destination: str | Path
+    ) -> None:
+        source_label = str(self.settings.value("cloud_label/" + source, "") or "")
+        if source_label:
+            row.path_button.setText(source_label.rsplit(" / ", 1)[-1])
+            row.path_button.setToolTip(source_label)
+        destination_text = str(destination)
+        destination_label = str(
+            self.settings.value("cloud_label/" + destination_text, "") or ""
+        )
+        if destination_label:
+            row.destination_button.setText("Куда: " + destination_label)
+            row.destination_button.setToolTip(destination_label)
 
     def refresh_files_overview(self) -> None:
         if not hasattr(self, "files_overview_layout"):
@@ -6007,6 +6379,8 @@ class MainWindow(QMainWindow):
                 panel.hard_stop_button,
             ):
                 button.setEnabled(active)
+                if button in (panel.visible_stop_button, panel.hard_stop_button):
+                    button.setVisible(active)
 
     def set_download_controls_enabled(self, enabled: bool) -> None:
         self.set_transfer_controls_enabled(enabled)
@@ -6411,6 +6785,7 @@ class MainWindow(QMainWindow):
                 self.show_source_links_check.isChecked(),
                 self.show_destination_links_check.isChecked(),
             )
+            self.apply_friendly_row_labels(row, source, destination)
             row.update_data(task.size, 0, 0, 0, "ОЖИДАНИЕ")
             task.row = row
             panel.file_rows[source] = row
@@ -7353,9 +7728,9 @@ class MainWindow(QMainWindow):
         try:
             for panel in self.transfer_panels.values():
                 if hasattr(panel, "speed_graph"):
-                    panel.speed_graph.setVisible(event.size().height() >= 880)
+                    panel.speed_graph.setVisible(False)
                     panel.ring.setVisible(event.size().height() >= 760)
-                    panel.recent_card.setVisible(event.size().height() >= 820)
+                    panel.recent_card.setVisible(False)
             if width < 1020 and self.sidebar_expanded:
                 self._responsive_sidebar_collapsed = True
                 self.set_navigation_panel_expanded(False, animate=False)
@@ -7428,8 +7803,6 @@ def main() -> int:
     if "--smoke-test" in sys.argv:
         window.show()
         QTimer.singleShot(900, app.quit)
-    elif window.should_restore_maximized:
-        window.showMaximized()
     else:
         window.show()
     if "--smoke-test" not in sys.argv:

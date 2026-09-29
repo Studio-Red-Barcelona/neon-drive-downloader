@@ -239,8 +239,8 @@ class Beta9Tests(unittest.TestCase):
         panel.destination.setText("NeonGoogleDrive:Video")
         QTest.qWait(10)
         headings = [label.text() for label in panel.page.findChildren(QLabel)]
-        self.assertTrue(any(text.startswith("ОТКУДА · ФИЗИЧЕСКИЙ ДИСК") for text in headings))
-        self.assertIn("КУДА · GOOGLE DRIVE", headings)
+        self.assertIn("С КОМПЬЮТЕРА", headings)
+        self.assertIn("В GOOGLE DRIVE", headings)
 
 
 if __name__ == "__main__":

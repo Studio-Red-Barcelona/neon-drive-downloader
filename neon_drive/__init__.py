@@ -1,3 +1,3 @@
 """Neon Drive."""
 
-__version__ = "5.6.0-beta.6"
+__version__ = "6.0.0-beta.1"
