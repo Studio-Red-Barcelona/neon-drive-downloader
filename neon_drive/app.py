@@ -3756,8 +3756,12 @@ class MainWindow(QMainWindow):
             selected = key == preset
             button.setText("АКТИВНЫЙ ПРОФИЛЬ" if selected else "ВЫБРАТЬ")
             button.setProperty("selected", selected)
-            button.style().unpolish(button)
-            button.style().polish(button)
+            # QWidget.style() can be exposed as QWidgetItem by some PySide6
+            # Apple Silicon builds. The application style is stable on every
+            # supported platform and performs the same dynamic-property refresh.
+            application_style = QApplication.style()
+            application_style.unpolish(button)
+            application_style.polish(button)
 
         if not hasattr(self, "copy_profile_combo"):
             return
