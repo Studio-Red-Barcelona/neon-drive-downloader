@@ -1,5 +1,13 @@
 # Changelog
 
+## 6.0.0-beta.3
+
+- Fixed unreadable folder names in the multi-folder Explorer/Finder picker.
+- Gave the picker an explicit soft-light palette independent of the application theme.
+- Added clear hover and blue selection states, readable column headers and controls.
+- Increased the picker size while retaining multi-folder selection.
+- Added regression coverage for picker contrast and minimum dimensions.
+
 ## 6.0.0-beta.2
 
 - Removed the Google Drive-only restriction from the Download page.

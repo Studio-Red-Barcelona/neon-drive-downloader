@@ -106,7 +106,7 @@ if sys.platform == 'darwin':
         bundle_identifier='com.neontools.neondrive',
         info_plist={
             'CFBundleShortVersionString': __version__,
-            'CFBundleVersion': '6.0.0.2',
+            'CFBundleVersion': '6.0.0.3',
             'LSMinimumSystemVersion': '12.0',
             'NSHighResolutionCapable': True,
         },

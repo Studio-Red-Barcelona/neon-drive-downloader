@@ -2,20 +2,20 @@
 
 ### Ваши файлы. Понятная передача. Windows + macOS.
 
-![Version](https://img.shields.io/badge/version-6.0.0--beta.2-4285F4)
+![Version](https://img.shields.io/badge/version-6.0.0--beta.3-4285F4)
 ![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011-34A853)
 ![macOS](https://img.shields.io/badge/macOS-12%2B-FBBC04)
 ![Channel](https://img.shields.io/badge/channel-beta-EA4335)
 
-## Скачать 6.0.0 Beta 2
+## Скачать 6.0.0 Beta 3
 
 | Система | Приложение со встроенным Rclone | Менеджер версий |
 | :--- | :--- | :--- |
-| 🪟 **Windows 10 / 11 · x64** | [⬇ Скачать Setup.exe](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.2/NeonDrive-Setup.exe) | [⬇ Скачать Installer.exe](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.2/NeonDriveInstaller.exe) |
-| 🍎 **Mac · Apple Silicon** | [⬇ Скачать приложение ARM64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.2/NeonDrive-macOS-arm64.dmg) | [⬇ Скачать установщик ARM64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.2/NeonDriveInstaller-macOS-arm64.dmg) |
-| 💻 **Mac · Intel** | [⬇ Скачать приложение x64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.2/NeonDrive-macOS-x64.dmg) | [⬇ Скачать установщик x64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.2/NeonDriveInstaller-macOS-x64.dmg) |
+| 🪟 **Windows 10 / 11 · x64** | [⬇ Скачать Setup.exe](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.3/NeonDrive-Setup.exe) | [⬇ Скачать Installer.exe](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.3/NeonDriveInstaller.exe) |
+| 🍎 **Mac · Apple Silicon** | [⬇ Скачать приложение ARM64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.3/NeonDrive-macOS-arm64.dmg) | [⬇ Скачать установщик ARM64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.3/NeonDriveInstaller-macOS-arm64.dmg) |
+| 💻 **Mac · Intel** | [⬇ Скачать приложение x64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.3/NeonDrive-macOS-x64.dmg) | [⬇ Скачать установщик x64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.3/NeonDriveInstaller-macOS-x64.dmg) |
 
-**Для Windows:** [установить Neon Drive](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.2/NeonDrive-Setup.exe) · [менеджер новых и старых версий](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.2/NeonDriveInstaller.exe).
+**Для Windows:** [установить Neon Drive](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.3/NeonDrive-Setup.exe) · [менеджер новых и старых версий](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.3/NeonDriveInstaller.exe).
 
 [Все версии и изменения →](https://github.com/prostoodin1/neon-drive-downloader/releases)
 · [Сообщить об ошибке →](https://github.com/prostoodin1/neon-drive-downloader/issues)
@@ -38,7 +38,14 @@ Neon Drive — независимое приложение, не продукт 
 Все скриншоты собраны из настоящих виджетов приложения с демонстрационными,
 обезличенными путями и аккаунтом.
 
-## Новое в 6.0.0 Beta 2
+## Новое в 6.0.0 Beta 3
+
+- **Читаемый выбор папок:** названия объектов больше не сливаются с тёмным фоном.
+- **Единый светлый диалог:** чёрный текст, светлый список, заметные заголовки
+  столбцов и синяя подсветка выбранного объекта при любой теме Neon Drive.
+- **Больше места:** окно выбора папок увеличено, но множественный выбор сохранён.
+
+### Также включено из Beta 2
 
 - **Два способа выбрать источник скачивания:** встроенный Google Drive или обычный
   Проводник Windows/Finder для файлов и целых папок.
