@@ -1,296 +1,99 @@
-# Neon Drive
+<div align="center">
+  <img src="assets/neon-drive-v3.png" width="128" alt="Neon Drive icon">
+  <h1>Neon Drive</h1>
+  <p><strong>Fast, clear and verifiable file transfers.</strong><br>Google Drive · local disks · external drives · network storage</p>
 
-### Ваши файлы. Понятная передача. Windows + macOS.
+  [![Version](https://img.shields.io/badge/version-6.0.4--alpha-0B57D0?style=for-the-badge)](https://github.com/prostoodin1/neon-drive-downloader/releases/tag/v6.0.4-alpha)
+  [![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011-34A853?style=for-the-badge&logo=windows)](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDrive-Setup.exe)
+  [![macOS](https://img.shields.io/badge/macOS-12%2B-202124?style=for-the-badge&logo=apple)](https://github.com/prostoodin1/neon-drive-downloader/releases/tag/v6.0.4-alpha)
+  [![Channel](https://img.shields.io/badge/channel-Alpha-EA4335?style=for-the-badge)](https://github.com/prostoodin1/neon-drive-downloader/releases)
+</div>
 
-![Version](https://img.shields.io/badge/version-6.0.0--beta.3-4285F4)
-![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011-34A853)
-![macOS](https://img.shields.io/badge/macOS-12%2B-FBBC04)
-![Channel](https://img.shields.io/badge/channel-beta-EA4335)
+> [!IMPORTANT]
+> **6.0.4 Alpha** is a preview build. Keep a backup of important files and verify critical transfers before deleting the source.
 
-## Скачать 6.0.0 Beta 3
+## Download · Скачать
 
-| Система | Приложение со встроенным Rclone | Менеджер версий |
+| Platform | Neon Drive with bundled Rclone | Version Manager |
 | :--- | :--- | :--- |
-| 🪟 **Windows 10 / 11 · x64** | [⬇ Скачать Setup.exe](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.3/NeonDrive-Setup.exe) | [⬇ Скачать Installer.exe](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.3/NeonDriveInstaller.exe) |
-| 🍎 **Mac · Apple Silicon** | [⬇ Скачать приложение ARM64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.3/NeonDrive-macOS-arm64.dmg) | [⬇ Скачать установщик ARM64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.3/NeonDriveInstaller-macOS-arm64.dmg) |
-| 💻 **Mac · Intel** | [⬇ Скачать приложение x64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.3/NeonDrive-macOS-x64.dmg) | [⬇ Скачать установщик x64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.3/NeonDriveInstaller-macOS-x64.dmg) |
+| **Windows 10/11 · x64** | [Download Setup.exe](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDrive-Setup.exe) | [Download Installer.exe](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDriveInstaller.exe) |
+| **macOS · Apple Silicon** | [Download ARM64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDrive-macOS-arm64.dmg) | [Download Installer ARM64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDriveInstaller-macOS-arm64.dmg) |
+| **macOS · Intel** | [Download x64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDrive-macOS-x64.dmg) | [Download Installer x64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDriveInstaller-macOS-x64.dmg) |
 
-**Для Windows:** [установить Neon Drive](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.3/NeonDrive-Setup.exe) · [менеджер новых и старых версий](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.0-beta.3/NeonDriveInstaller.exe).
+No ZIP archive, GitHub Desktop, GitHub CLI or GitHub account is required. The separate **Version Manager** can install a current or previous release and shows its changelog.
 
-[Все версии и изменения →](https://github.com/prostoodin1/neon-drive-downloader/releases)
-· [Сообщить об ошибке →](https://github.com/prostoodin1/neon-drive-downloader/issues)
+## Interface
 
-**Приложение** — готовый пакет со встроенным Rclone и скрытым CLI.
-**Менеджер версий** — отдельное приложение для выбора, установки и переустановки
-новых и предыдущих версий с историей изменений. GitHub Desktop, GitHub CLI,
-Git и аккаунт GitHub **не нужны**. Публичных ZIP/portable-пакетов нет.
-
-Neon Drive — независимое приложение, не продукт Google.
-
-## Интерфейс Neon Drive 6
-
-| Скачать | Выгрузить |
+| Download | Upload |
 | :---: | :---: |
-| ![Страница скачивания](docs/screenshots/neon-drive-6/download.png) | ![Страница выгрузки](docs/screenshots/neon-drive-6/upload.png) |
+| ![Neon Drive download screen](docs/screenshots/neon-drive-6/download.png) | ![Neon Drive upload screen](docs/screenshots/neon-drive-6/upload.png) |
 
-![Компактные настройки Neon Drive 6](docs/screenshots/neon-drive-6/settings.png)
+| Essential settings | About Neon Drive |
+| :---: | :---: |
+| ![Neon Drive settings](docs/screenshots/neon-drive-6/settings.png) | ![About Neon Drive](docs/screenshots/neon-drive-6/about.png) |
 
-Все скриншоты собраны из настоящих виджетов приложения с демонстрационными,
-обезличенными путями и аккаунтом.
+All screenshots are generated from the real application widgets using fictional paths and a demo account. They contain no developer workstation, user profile or private cloud data.
 
-## Новое в 6.0.0 Beta 3
+## What is new in 6.0.4 Alpha
 
-- **Читаемый выбор папок:** названия объектов больше не сливаются с тёмным фоном.
-- **Единый светлый диалог:** чёрный текст, светлый список, заметные заголовки
-  столбцов и синяя подсветка выбранного объекта при любой теме Neon Drive.
-- **Больше места:** окно выбора папок увеличено, но множественный выбор сохранён.
+- **Multilingual UI:** switch between Русский, English and Español in Settings. The language changes immediately and is remembered.
+- **Official About section:** version, release channel, supported systems, bundled Rclone status and project links in one place.
+- **New application icon:** a modern transfer-and-cloud mark used by the app, Windows installer and macOS bundles.
+- **Privacy-safe media:** refreshed product screenshots contain only fictional demo paths and identities.
+- **Polished compact layout:** Download and Upload remain the only primary pages; technical Rclone settings stay out of the normal workflow.
+- **Readable folder picker:** a high-contrast light file list remains readable under every application theme.
 
-### Также включено из Beta 2
+## Основные возможности
 
-- **Два способа выбрать источник скачивания:** встроенный Google Drive или обычный
-  Проводник Windows/Finder для файлов и целых папок.
-- **Без жёсткой привязки к облаку:** локальные, внешние и сетевые пути можно
-  передавать на выбранный диск с той же страницы «Скачать».
-- **Перетаскивание:** файлы и папки из Проводника можно бросить прямо в поле источника.
-- **Автоопределение сохранено:** Google Drive скачивается через Neon Rclone,
-  а обычные пути автоматически используют подходящий локальный движок.
+- Скачивание из Google Drive через OAuth2 и встроенный Rclone.
+- Выбор локальных файлов и целых папок через Проводник Windows или Finder.
+- Выгрузка в Google Drive, на физический, внешний, сетевой или синхронизируемый диск.
+- Несколько файлов последовательно, с ограниченной параллельностью или одновременно.
+- Пауза, продолжение незавершённой передачи и полная остановка всех процессов задачи.
+- Проверка уже существующих файлов, целостности источника и результата.
+- Сохранение настроек и постоянного счётчика переданных данных между обновлениями.
+- Один экземпляр Neon Drive и автоматическое завершение рабочих процессов после задачи.
+- Скрытый `NeonDriveCLI` для локальной автоматизации и AI-агентов.
 
-### Также включено из Beta 1
+## Google Drive and privacy
 
-- **Две понятные страницы:** только «Скачать» и «Выгрузить» в основном меню.
-- **Встроенный проводник Google Drive:** выбор нескольких облачных файлов или
-  целых папок без ручного ввода Rclone-пути.
-- **Простая выгрузка:** локальные файлы и папки можно выбрать кнопкой или
-  перетащить в окно; папка назначения выбирается в облачном проводнике.
-- **Минимум настроек:** аккаунты, папка загрузки, параллельность, тема,
-  уведомления, автозапуск, обновления и диагностика.
-- **Удобный размер:** полноэкранное разворачивание отключено, а интерфейс
-  адаптируется между компактным и обычным размером без исчезновения действий.
-- **Спокойная светлая тема:** новый интерфейс по умолчанию оформлен в цветах
-  Google Drive; технические пути Rclone скрыты за понятными названиями.
+Neon Drive opens Google's OAuth2 consent page and stores the resulting Rclone configuration in the local application-data directory. Passwords are never requested by Neon Drive. Direct cloud transfers use the account selected in Settings; ordinary Explorer/Finder copying remains available for mounted drives.
 
-## История поколения 5.6
+Neon Drive is an independent open-source application and is **not affiliated with or endorsed by Google**. Google Drive is a trademark of Google LLC.
 
-## Новое в 5.6.0 Beta 6
+## Quick start
 
-- **Несколько файлов действительно одновременно:** режим «Несколько одновременно»
-  снова запускает выбранное число Rclone-процессов. Последовательный режим сохранён.
-- **Стабильнее без ограничения скорости:** Neon распределяет частоту служебных
-  Google API-запросов между процессами, но не использует `--bwlimit`.
-- **Первый запуск и обновления:** новый пользователь один раз увидит быстрый старт,
-  а после каждой новой версии один раз показывается список изменений.
-- **Несколько целых папок:** кнопка «Добавить папки» позволяет выбрать несколько
-  каталогов или корней дисков; каждый полностью добавляется в общую очередь.
+1. Install the package for your system.
+2. Open **Settings → Google Drive** and connect an account if direct cloud access is required.
+3. Open **Download** or **Upload**, choose files or folders, select the destination and press the main action button.
+4. Keep the source available until Neon reports that every item is complete and verified.
 
-### Также включено из Beta 5
+## Build from source
 
-- **Понятная почта OAuth2:** в настройках дословно написано
-  `OAuth2 подключён к: имя@gmail.com`. Адрес берётся у Google после входа;
-  тестовые значения вроде `team@example.com` больше не считаются аккаунтом.
-- **Все выбранные файлы учитываются:** очередь хранит каждый выбранный объект,
-  а завершение засчитывается только после подтверждения соответствующего процесса.
-- **Честные 100%:** отправка последнего байта показывает этап подтверждения Google.
-  Общий индикатор станет 100% только после успешного завершения всех файлов.
-
-### Также включено из Beta 4
-
-- **Исправлена ошибка 401 Google Drive:** Neon распознаёт отозванный или истёкший
-  OAuth2-доступ и больше не показывает технический текст Rclone как ошибку папки.
-- **Переподключение без потери пути:** показывается почта выбранного аккаунта и
-  кнопка переподключения. После OAuth сохранённая передача запускается повторно.
-- **Компактные кнопки без обрезания:** действия выбора и остановки разнесены на две
-  строки и полностью видны при обычном и компактном размере окна.
-- **Публичный скриншот обезличен:** локальное имя Windows удалено; используется
-  нейтральный путь `C:/Downloads`.
-
-### Также включено из Beta 3
-
-- **Полностью остановить:** отдельная видимая кнопка немедленно очищает очередь и
-  закрывает все процессы Rclone, Robocopy и Turbo текущей передачи. Обычная кнопка
-  «Остановить» по-прежнему работает как пауза с возможностью продолжения.
-- **Проверка назначения:** совпадающие локальные файлы пропускаются до запуска,
-  отличающиеся требуют подтверждения, а существующие папки безопасно объединяются.
-  В Google Drive каждый объект перед выгрузкой сверяет Rclone.
-- **Целые папки и свои диски:** кнопка «Добавить папки» работает для загрузки и
-  выгрузки. Можно копировать папки между физическими, внешними и сетевыми дисками,
-  не используя Google Drive.
-- **Очистка «Передач»:** новая кнопка удаляет накопившиеся списки, строки, терминалы
-  и графики загрузки/выгрузки, но не сбрасывает общий счётчик переданных данных.
-- **Понятные Google-аккаунты:** для каждого подключения показываются почта,
-  название профиля и тип аккаунта; почта активного аккаунта видна отдельно.
-
-- **Сразу в Google Drive:** папка на виртуальном диске теперь автоматически
-  передаётся прямому Neon Rclone. Промежуточного локального копирования и ожидания
-  второй синхронизации клиента Google Drive больше нет.
-- **Без потолка 56 МБ/с:** Neon не передаёт Rclone `--bwlimit`; выбранные
-  параллельные процессы делят доступный канал. Реальная скорость зависит от сети,
-  диска, количества одновременных файлов и Google.
-- **Быстрее большие файлы:** чанк Google Drive теперь связан с профилем скорости:
-  64 МиБ, 128 МиБ, 256 МиБ или 1 ГиБ. Новая установка начинает с быстрого профиля.
-- **Ручной вариант сохранён:** если в настройках явно выбрано обычное копирование,
-  файл по-прежнему отдаётся клиенту Google Drive for desktop.
-
-- **Стабильнее Google Drive:** увеличены сетевые таймауты и повторы, добавлена
-  плавная работа API-pacer без ограничения пропускной способности.
-- **Автоскачивание из Google Drive:** выбранные в Проводнике файлы Google Drive
-  автоматически преобразуются в прямые источники Neon Rclone, а назначение остаётся локальным.
-- **Несколько файлов:** в «Шаблонах» можно выбрать очередь или одновременную передачу.
-  Локальные движки и прямой Google Drive поддерживают до десяти выбранных задач.
-- **Продолжение с синей кнопки:** во время сохранённой паузы основная кнопка становится
-  синей «Продолжить» и возобновляет те же процессы. Robocopy `/Z` включён во всех шаблонах.
-- **Живые графики:** красный означает низкую скорость, жёлтый — среднюю, зелёный —
-  высокую. Доступны общий график и история каждого файла, в том числе после завершения.
-
-- **Несколько Google-аккаунтов:** добавляйте личные, Workspace и командные
-  подключения, выбирайте активное и удаляйте или переподключайте каждое отдельно.
-- **Настоящее «Остановить → Продолжить»:** активный Rclone не закрывается, поэтому
-  продолжение использует тот же PID и resumable-сессию во всех шаблонах. Для этого
-  Neon должен оставаться запущенным; полная отмена доступна отдельной кнопкой рядом.
-
-- **Проводник сначала, Rclone потом:** конечная папка выбирается в обычном
-  Проводнике/Finder и остаётся видимой в поле «Куда». Только при запуске Neon
-  преобразует этот путь для Rclone — отдельный облачный поиск папок не открывается.
-- **Автоопределение путей:** Neon различает физические диски (`C:`, `D:` и другие),
-  сетевые папки, виртуальный Google Drive и прямое подключение OAuth2. Подписи
-  «Откуда» / «Куда» и однозначное направление меняются автоматически.
-
-- **Выбор облачной папки:** «Мой диск» и общие диски Google Drive, переход по папкам
-  и подтверждение конкретного назначения по ID. Нажатие Google Drive больше не
-  заменяет выбранный путь корнем «Моего диска».
-- **Выбор маршрута:** при выборе папки Google Drive в Проводнике/Finder Neon
-  предлагает прямую выгрузку по OAuth2 или обычное копирование через клиент Google.
-  В настройках можно выбрать «спрашивать», «напрямую» или «обычное копирование».
-- **«Остановить» рядом со стартом** на страницах загрузки и выгрузки, без открытия
-  терминала. Активная передача сохраняет сессию для продолжения; ещё не начатая
-  очередь отменяется обычным образом.
-- **«Выбрать файл» заменяет список**, а «Добавить файлы» явно дополняет его.
-- **«Экстрим»** — отдельный шаблон с чанком Google Drive 1024 МиБ (1 ГиБ).
-  Для такого чанка применяется одна одновременная выгрузка файла.
-- **Установщик без GitHub CLI:** публичный API, резервный публичный каталог,
-  сохранённая история и кнопка «Установить файл…» для уже скачанного пакета.
-- **Настоящие ссылки на пакеты** и в README, и в описании релиза.
-  Ссылки в истории изменений установщика также открываются по нажатию.
-
-### Как выбрать «Куда» на Google Drive
-
-1. Выберите локальные файлы кнопкой **«Выбрать файл»** или **«Добавить файлы»**.
-2. Выберите папку назначения в Проводнике/Finder. Для распознанного Google Drive
-   появится предложение: **«Через Neon»** или **«Обычное копирование»**.
-3. Для прямой выгрузки нажмите **Google Drive**, выберите конечную папку в обычном
-   Проводнике/Finder и подключите нужный Google-аккаунт по OAuth2. Путь останется
-   видимым; Neon Rclone получит его только при запуске передачи.
-4. Проверьте показанный маршрут и нажмите **«Начать передачу»**.
-
-Например, путь `H:/Unidades compartidas/Clients Materials/Test carpet` Neon
-пытается сопоставить с общим диском **Clients Materials** и папкой **Test carpet**.
-Для «Моего диска» путь преобразуется без запросов списка облачных папок. Для
-общего диска на Windows Neon читает точные ID диска и выбранной папки из локального
-кэша Google Drive for desktop только для чтения; вложенные папки по имени не
-обходятся. Отмена сохраняет исходный путь.
-
-Список общих дисков зависит от подключённого OAuth-аккаунта и его прав.
-Если диск не виден, проверьте, что Neon и клиент Google используют нужный аккаунт.
-Не найденный общий диск **не подменяется** «Моим диском».
-
-**Важно:** копирование в виртуальную папку Google Drive и прямая выгрузка —
-разные маршруты. В первом случае интернет-передачу выполняет клиент Google;
-100% в Neon означает завершение копирования, а не завершение облачной синхронизации.
-При прямой выгрузке данные отправляет встроенный Rclone через API Google Drive.
-
-### Скорость, чанки и память
-
-| Шаблон | Назначение | Чанк Google Drive |
-| :--- | :--- | :--- |
-| Медленно | Фоновая работа с ограничением нагрузки | 64 МиБ |
-| Оптимально | Баланс скорости и ресурсов | 64 МиБ |
-| Максимально | Без ограничения скорости со стороны профиля | 64 МиБ |
-| Экстрим | Экспериментальный режим для больших выгрузок | 1024 МиБ |
-
-Размер чанка Google Drive можно вручную выбрать в настройках поведения:
-от **8 до 1024 МиБ**, степенями двойки. Это отдельный параметр от локальных чанков.
-
-**Чанк 1 ГиБ требует примерно 1 ГиБ RAM только под один буфер**, плюс память
-самого приложения и Rclone. Большие чанки ограничивают параллельность файлов,
-чтобы не умножать этот расход. Размер чанка не обходит ограничения Google Drive,
-провайдера, диска или сети и не гарантирует ускорение. При нехватке RAM используйте
-«Оптимально» или меньший чанк. Профили не запускают несколько экземпляров Neon.
-
-### Установка и обновления
-
-Для обычной установки Windows достаточно скачанного **NeonDrive-Setup.exe**:
-в нём уже есть приложение, Python/Qt, Rclone и CLI. Никакой GitHub-клиент не нужен.
-На Mac откройте DMG своего процессора и перенесите приложение в Applications.
-
-Менеджер версий загружает список и пакеты по публичным HTTPS-ссылкам.
-Набор корневых HTTPS-сертификатов включён в пакет; проверка сертификатов
-и имени сервера остаётся включённой.
-При недоступности API он пробует резервный каталог, затем сохранённую историю.
-**Интернет всё равно нужен для скачивания нового пакета.** Если пакет уже скачан,
-откройте его напрямую или выберите **«Установить файл…»** в менеджере.
-Сохранённый список может быть устаревшим. Последний успешно скачанный установщик
-сохраняется; повреждённая новая загрузка не заменяет предыдущую.
-Для новых пакетов проверяется SHA-256, если GitHub публикует контрольную сумму.
-
-### Если Mac не открывает приложение
-
-Требуется **macOS 12+**. Выберите Apple Silicon (ARM64) или Intel (x64)
-в соответствии с «Об этом Mac». Нативная Apple Silicon-сборка не требует Rosetta;
-старые Intel-only версии могут её потребовать.
-
-Сборки пока **без Developer ID / нотарификации Apple**. Если macOS сообщает
-о неизвестном разработчике, следуйте [инструкции Apple](https://support.apple.com/en-euro/102445)
-и разрешайте запуск только если доверяете пакету. Защита системы не отключается.
-Запуск, архитектура, установка, замена и удаление в Корзину проверяются на macOS 15
-в CI; физический Mac с macOS 12 пока не проверен.
-
-## Остальные возможности
-
-- Robocopy, встроенный Rclone и безопасный совместный режим без двух движков,
-  одновременно записывающих один файл.
-- Ожидание готовности исходников, контроль изменения источника и прогресс по байтам.
-- Необязательный файловый буфер **скачивания отдельных файлов**:
-  временная папка `.neon-buffer-…` на диске назначения очищается после успеха
-  или отмены. Если финальный перенос не удался, данные сохраняются для восстановления;
-  после аварийного выключения буфер также может остаться. Папки и выгрузка работают напрямую.
-- Приглушённая светлая и тёмная Google Drive-палитры, цветные кнопки,
-  компактное окно, сворачиваемая боковая панель и запоминание настроек.
-- Статус, скорость, ETA, общий счётчик переданных данных и отдельный монитор Rclone,
-  который открывается только по желанию пользователя.
-- Настройки через шестерёнку снизу, Advanced mode, диагностика и безопасная
-  переустановка встроенного Rclone.
-- Фоновая работа, автозапуск Windows/macOS и завершение после окончания очереди.
-- Один экземпляр Neon и скрытый локальный CLI с JSON для AI-агентов.
-
-В beta-версиях вкладка выгрузки включается дополнением в настройках обновлений.
-Кнопка «После файла» позволяет остановить очередь после текущего файла.
-Кнопка **«Остановить»** делает это сразу; исходники не удаляются.
-Частичный результат зависит от движка: локальные данные могут сохраняться для
-докачки, отменённая облачная выгрузка может потребовать повторного старта.
-
-## Скрытый CLI для AI-агентов
-
-CLI не является вкладкой. Он обращается к единственному запущенному Neon через
-локальный IPC; ответы возвращаются в JSON.
-
-```powershell
-NeonDriveCLI.exe status
-NeonDriveCLI.exe add --source "C:\Media\movie.mkv" --destination "NeonGoogleDrive:Video" --profile extreme --start
-NeonDriveCLI.exe pause
-NeonDriveCLI.exe resume
-NeonDriveCLI.exe stop
-```
-
-## Запуск из исходников и сборка
+Requirements: Python 3.11+ (3.12 on Windows), PySide6 and the dependencies in `requirements.txt`.
 
 ```powershell
 python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-python scripts/fetch_rclone.py
-python main.py
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe main.py
 ```
 
-Проверки: `python scripts/run_tests.py`. Сборка Windows: `.\build.ps1`.
-GitHub Actions по тегу `v*` собирает Windows и обе архитектуры macOS,
-проверяет пакеты, публикует релиз и обновляет публичный каталог установщика.
-Журналы Windows: `%LOCALAPPDATA%\NeonDriveDownloader\logs\session-*.log`.
+Run the isolated test suite:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\run_tests.py
+```
+
+## Project links
+
+- [All releases](https://github.com/prostoodin1/neon-drive-downloader/releases)
+- [Report a problem](https://github.com/prostoodin1/neon-drive-downloader/issues)
+- [Changelog](CHANGELOG.md)
+- [Generation 6 interface specification](docs/NEON_DRIVE_6_SPEC.md)
+
+---
+
+<div align="center">
+  <strong>Neon Drive 6.0.4 Alpha</strong><br>
+  Built for clear, recoverable and fast transfers.
+</div>

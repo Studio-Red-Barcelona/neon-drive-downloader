@@ -3,7 +3,7 @@ from neon_drive import __version__
 
 a = Analysis(
     ['installer_main.py'], pathex=[], binaries=[],
-    datas=[('assets/neon-drive-v2.png', 'assets')],
+    datas=[('assets/neon-drive-v3.png', 'assets')],
     hiddenimports=['PySide6.QtNetwork'],
     hookspath=[], hooksconfig={}, runtime_hooks=[], excludes=[],
     noarchive=False, optimize=0,
@@ -18,10 +18,11 @@ exe = EXE(
 coll = COLLECT(exe, a.binaries, a.datas, strip=False, upx=False, name='NeonDriveInstallerMac')
 app = BUNDLE(
     coll, name='Neon Drive Installer.app',
+    icon='assets/neon-drive-v3.icns',
     bundle_identifier='com.neontools.neondrive.installer',
     info_plist={
         'CFBundleShortVersionString': __version__,
-        'CFBundleVersion': '5.5.0.9',
+        'CFBundleVersion': '6.0.4.0',
         'LSMinimumSystemVersion': '12.0',
         'NSHighResolutionCapable': True,
     },

@@ -17,7 +17,8 @@ MAX_MANIFEST_BYTES = 128 * 1024
 
 
 def is_beta_build(version: str) -> bool:
-    return "beta" in version.casefold()
+    value = version.casefold()
+    return any(channel in value for channel in ("alpha", "beta", "rc"))
 
 
 def addon_directory() -> Path:

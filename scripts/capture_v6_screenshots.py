@@ -26,6 +26,11 @@ def main() -> int:
 
         from neon_drive.app import MainWindow
         from neon_drive.google_drive import GOOGLE_DRIVE_REMOTE, store_google_drive_token
+        from neon_drive.settings_store import create_settings
+
+        preview_settings = create_settings("Neon Drive Downloader")
+        preview_settings.setValue("language", "ru")
+        preview_settings.sync()
 
         store_google_drive_token(
             {"access_token": "preview", "refresh_token": "preview"},
@@ -57,7 +62,7 @@ def main() -> int:
         )
         window.source_directory_flags[cloud_folder] = True
         download.sources.setPlainText(cloud_file + "\n" + cloud_folder)
-        download.destination.setText(r"C:\Users\User\Downloads\Neon")
+        download.destination.setText(r"D:\Neon Demo\Downloads")
         window.show_transfer_direction("download")
         window.show()
         app.processEvents()
@@ -78,8 +83,8 @@ def main() -> int:
         window.grab().save(str(output / "download.png"))
 
         upload = window.transfer_panels["upload"]
-        local_file = r"C:\Users\User\Videos\Project_final.mp4"
-        local_folder = r"C:\Users\User\Pictures\Campaign"
+        local_file = r"D:\Neon Demo\Media\Project_final.mp4"
+        local_folder = r"D:\Neon Demo\Projects\Campaign"
         cloud_target = "NeonGoogleDrive,root_folder_id=website_assets:"
         window.settings.setValue(
             "cloud_label/" + cloud_target,
@@ -109,6 +114,11 @@ def main() -> int:
         window.toggle_settings_page()
         app.processEvents()
         window.grab().save(str(output / "settings.png"))
+        window.v6_settings_scroll.verticalScrollBar().setValue(
+            window.v6_settings_scroll.verticalScrollBar().maximum()
+        )
+        app.processEvents()
+        window.grab().save(str(output / "about.png"))
         window.force_exit = True
         window.close()
         app.processEvents()

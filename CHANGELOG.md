@@ -1,5 +1,14 @@
 # Changelog
 
+## 6.0.4-alpha
+
+- Added Russian, English and Spanish UI languages with immediate switching and saved preferences.
+- Added an official About section with version, Alpha channel, bundled Rclone, platform support and project links.
+- Replaced the application and installer artwork with the new Neon Drive v3 icon.
+- Rebuilt public screenshots with fictional paths and demo account data only.
+- Refreshed README and release presentation for Windows and both macOS architectures.
+- Kept the high-contrast multi-folder picker and all Generation 6 transfer workflows.
+
 ## 6.0.0-beta.3
 
 - Fixed unreadable folder names in the multi-folder Explorer/Finder picker.

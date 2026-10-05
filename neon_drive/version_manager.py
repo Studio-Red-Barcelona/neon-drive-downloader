@@ -9,7 +9,7 @@ from pathlib import Path
 
 import psutil
 from PySide6.QtCore import QSettings, QTimer, QUrl, QThread, Signal
-from PySide6.QtGui import QDesktopServices
+from PySide6.QtGui import QDesktopServices, QIcon
 from PySide6.QtWidgets import (
     QApplication,
     QFileDialog,
@@ -348,7 +348,13 @@ class VersionManagerWindow(QMainWindow):
         self.releases = releases
         self.version_list.clear()
         for release in releases:
-            channel = "BETA" if release.get("prerelease") else "STABLE"
+            tag = str(release.get("tag") or release.get("version") or "")
+            channel = (
+                "ALPHA" if "alpha" in tag.casefold()
+                else "RC" if "rc" in tag.casefold()
+                else "BETA" if release.get("prerelease")
+                else "STABLE"
+            )
             current = (
                 "  • установлена"
                 if same_version(str(release.get("version") or ""), self.installed_version)
@@ -538,6 +544,10 @@ def main() -> int:
     app.setApplicationName("Neon Drive Installer")
     app.setOrganizationName("NeonTools")
     app.setStyle("Fusion")
+    bundle_root = Path(str(getattr(sys, "_MEIPASS", Path(__file__).resolve().parents[1])))
+    icon_path = bundle_root / "assets" / "neon-drive-v3.png"
+    if icon_path.is_file():
+        app.setWindowIcon(QIcon(str(icon_path)))
     window = VersionManagerWindow()
     window.show()
     if "--smoke-test" in sys.argv:

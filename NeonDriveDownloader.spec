@@ -11,14 +11,14 @@ if os.name == 'nt':
 
 
 rclone_name = 'rclone.exe' if os.name == 'nt' else 'rclone'
-app_icon = ['assets/neon-drive-v2.ico'] if os.name == 'nt' else None
+app_icon = ['assets/neon-drive-v3.ico'] if os.name == 'nt' else None
 
 a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[(f'vendor/rclone/{rclone_name}', 'tools')],
     datas=[
-        ('assets/neon-drive-v2.png', 'assets'),
+        ('assets/neon-drive-v3.png', 'assets'),
         ('vendor/rclone/install.json', 'tools'),
     ],
     hiddenimports=['PySide6.QtNetwork'],
@@ -102,11 +102,11 @@ if sys.platform == 'darwin':
     app = BUNDLE(
         coll,
         name='Neon Drive.app',
-        icon=None,
+        icon='assets/neon-drive-v3.icns',
         bundle_identifier='com.neontools.neondrive',
         info_plist={
             'CFBundleShortVersionString': __version__,
-            'CFBundleVersion': '6.0.0.3',
+            'CFBundleVersion': '6.0.4.0',
             'LSMinimumSystemVersion': '12.0',
             'NSHighResolutionCapable': True,
         },

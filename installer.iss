@@ -1,9 +1,9 @@
 #ifndef MyAppVersion
-  #define MyAppVersion "6.0.0-beta.3"
+  #define MyAppVersion "6.0.4-alpha"
 #endif
 
 #ifndef MyAppFileVersion
-  #define MyAppFileVersion "6.0.0.3"
+  #define MyAppFileVersion "6.0.4.0"
 #endif
 
 #define MyAppName "Neon Drive"
@@ -23,7 +23,7 @@ DisableProgramGroupPage=yes
 PrivilegesRequired=lowest
 OutputDir=dist
 OutputBaseFilename=NeonDrive-Setup
-SetupIconFile=assets\neon-drive-v2.ico
+SetupIconFile=assets\neon-drive-v3.ico
 UninstallDisplayIcon={app}\{#MyAppExeName}
 Compression=lzma2/ultra64
 SolidCompression=yes
@@ -37,7 +37,9 @@ VersionInfoProductName={#MyAppName}
 VersionInfoDescription=Fast and reliable transfers for Explorer-connected drives
 
 [Languages]
+Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
+Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "Создать ярлык на рабочем столе"; GroupDescription: "Дополнительные ярлыки:"; Flags: unchecked
