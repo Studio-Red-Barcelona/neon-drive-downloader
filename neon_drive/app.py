@@ -163,7 +163,7 @@ from .updater import (
 from .turbo_copy import TurboCopyStopped, parallel_copy_file
 
 
-APP_NAME = "Neon Drive"
+APP_NAME = "Studio Red Barcelona · Neon Drive"
 SETTINGS_APP_NAME = "Neon Drive Downloader"
 MAX_CONCURRENT_DOWNLOADS = 10
 MAX_DIRECTORY_THREADS = 16
@@ -1943,8 +1943,11 @@ class MainWindow(QMainWindow):
             self.sidebar_logo.setText("N")
         brand_copy = QVBoxLayout()
         brand_copy.setSpacing(0)
-        self.sidebar_brand = QLabel("NEON", objectName="sidebarBrand")
-        self.sidebar_version = QLabel(f"Drive {__version__}", objectName="sidebarVersion")
+        self.sidebar_brand = QLabel("STUDIO RED", objectName="sidebarBrand")
+        self.sidebar_brand.setStyleSheet("font-size: 15px; font-weight: 850;")
+        self.sidebar_version = QLabel(
+            f"Barcelona · {__version__}", objectName="sidebarVersion"
+        )
         brand_copy.addWidget(self.sidebar_brand)
         brand_copy.addWidget(self.sidebar_version)
         brand_row.addWidget(self.sidebar_logo)
@@ -3514,7 +3517,9 @@ class MainWindow(QMainWindow):
                 )
             )
         about_copy = QVBoxLayout()
-        self.about_product = QLabel(f"Neon Drive {__version__}", objectName="sectionTitle")
+        self.about_product = QLabel(
+            f"Studio Red Barcelona · Neon Drive {__version__}", objectName="sectionTitle"
+        )
         self.about_summary = QLabel(self.tr("about_summary"), objectName="settingDescription")
         self.about_summary.setWordWrap(True)
         self.about_details = QLabel(self.tr("about_details"), objectName="settingDescription")

@@ -133,7 +133,7 @@ jobs:
           tag="${{ github.ref_name }}"
           args=()
           if [[ "$tag" == *-* ]]; then args+=(--prerelease); fi
-          gh release create "$tag" release/*.exe release/*.dmg --title "Neon Drive $tag" --notes-file RELEASE_NOTES.md "${args[@]}"
+          gh release create "$tag" release/*.exe release/*.dmg --title "Studio Red Barcelona · Neon Drive $tag" --notes-file RELEASE_NOTES.md "${args[@]}"
       - name: Update public fallback catalog
         env:
           GH_TOKEN: ${{ github.token }}

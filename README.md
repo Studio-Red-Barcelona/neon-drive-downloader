@@ -1,12 +1,13 @@
 <div align="center">
   <img src="assets/neon-drive-v3.png" width="128" alt="Neon Drive icon">
-  <h1>Neon Drive</h1>
-  <p><strong>Fast, clear and verifiable file transfers.</strong><br>Google Drive · local disks · external drives · network storage</p>
+  <p><strong>STUDIO RED BARCELONA</strong></p>
+  <h1>Studio Red Barcelona · Neon Drive</h1>
+  <p><strong>Official studio file-transfer application.</strong><br>Google Drive · local disks · external drives · network storage</p>
 
-  [![Version](https://img.shields.io/badge/version-6.0.4--alpha-0B57D0?style=for-the-badge)](https://github.com/prostoodin1/neon-drive-downloader/releases/tag/v6.0.4-alpha)
-  [![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011-34A853?style=for-the-badge&logo=windows)](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDrive-Setup.exe)
-  [![macOS](https://img.shields.io/badge/macOS-12%2B-202124?style=for-the-badge&logo=apple)](https://github.com/prostoodin1/neon-drive-downloader/releases/tag/v6.0.4-alpha)
-  [![Channel](https://img.shields.io/badge/channel-Alpha-EA4335?style=for-the-badge)](https://github.com/prostoodin1/neon-drive-downloader/releases)
+  [![Version](https://img.shields.io/badge/version-6.0.4--alpha-0B57D0?style=for-the-badge)](https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases/tag/v6.0.4-alpha)
+  [![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011-34A853?style=for-the-badge&logo=windows)](https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDrive-Setup.exe)
+  [![macOS](https://img.shields.io/badge/macOS-12%2B-202124?style=for-the-badge&logo=apple)](https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases/tag/v6.0.4-alpha)
+  [![Channel](https://img.shields.io/badge/channel-Alpha-EA4335?style=for-the-badge)](https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases)
 </div>
 
 > [!IMPORTANT]
@@ -16,9 +17,9 @@
 
 | Platform | Neon Drive with bundled Rclone | Version Manager |
 | :--- | :--- | :--- |
-| **Windows 10/11 · x64** | [Download Setup.exe](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDrive-Setup.exe) | [Download Installer.exe](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDriveInstaller.exe) |
-| **macOS · Apple Silicon** | [Download ARM64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDrive-macOS-arm64.dmg) | [Download Installer ARM64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDriveInstaller-macOS-arm64.dmg) |
-| **macOS · Intel** | [Download x64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDrive-macOS-x64.dmg) | [Download Installer x64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDriveInstaller-macOS-x64.dmg) |
+| **Windows 10/11 · x64** | [Download Setup.exe](https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDrive-Setup.exe) | [Download Installer.exe](https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDriveInstaller.exe) |
+| **macOS · Apple Silicon** | [Download ARM64.dmg](https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDrive-macOS-arm64.dmg) | [Download Installer ARM64.dmg](https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDriveInstaller-macOS-arm64.dmg) |
+| **macOS · Intel** | [Download x64.dmg](https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDrive-macOS-x64.dmg) | [Download Installer x64.dmg](https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDriveInstaller-macOS-x64.dmg) |
 
 No ZIP archive, GitHub Desktop, GitHub CLI or GitHub account is required. The separate **Version Manager** can install a current or previous release and shows its changelog.
 
@@ -86,14 +87,14 @@ Run the isolated test suite:
 
 ## Project links
 
-- [All releases](https://github.com/prostoodin1/neon-drive-downloader/releases)
-- [Report a problem](https://github.com/prostoodin1/neon-drive-downloader/issues)
+- [Studio Red Barcelona releases](https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases)
+- [Studio support and issues](https://github.com/Studio-Red-Barcelona/neon-drive-downloader/issues)
 - [Changelog](CHANGELOG.md)
 - [Generation 6 interface specification](docs/NEON_DRIVE_6_SPEC.md)
 
 ---
 
 <div align="center">
-  <strong>Neon Drive 6.0.4 Alpha</strong><br>
-  Built for clear, recoverable and fast transfers.
+  <strong>Studio Red Barcelona · Neon Drive 6.0.4 Alpha</strong><br>
+  Official studio distribution for clear, recoverable and fast transfers.
 </div>

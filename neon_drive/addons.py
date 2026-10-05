@@ -10,7 +10,7 @@ from pathlib import Path
 from .platform_support import app_data_directory
 
 
-REPOSITORY = "prostoodin1/neon-drive-downloader"
+REPOSITORY = "Studio-Red-Barcelona/neon-drive-downloader"
 UPLOAD_ADDON_ID = "neon-uploader"
 UPLOAD_ADDON_FILE = "NeonUploaderAddon.json"
 MAX_MANIFEST_BYTES = 128 * 1024

@@ -21,7 +21,7 @@ from .network import https_context
 from .platform_support import app_data_directory, is_macos
 
 
-REPOSITORY = "prostoodin1/neon-drive-downloader"
+REPOSITORY = "Studio-Red-Barcelona/neon-drive-downloader"
 SETUP_ASSET_NAME = "NeonDrive-Setup.exe"
 PREVIOUS_SETUP_ASSET_NAME = "NeonDriveDownloader-Setup.exe"
 LEGACY_ASSET_NAME = "NeonDriveDownloader.exe"

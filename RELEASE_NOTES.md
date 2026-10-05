@@ -1,4 +1,4 @@
-# Neon Drive 6.0.4 Alpha
+# Studio Red Barcelona · Neon Drive 6.0.4 Alpha
 
 This Alpha release turns Neon Drive 6 into a more complete, international and publication-ready application.
 
@@ -26,8 +26,8 @@ This Alpha release turns Neon Drive 6 into a more complete, international and pu
 
 | Platform | Application | Version Manager |
 | :--- | :--- | :--- |
-| Windows 10/11 x64 | [NeonDrive-Setup.exe](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDrive-Setup.exe) | [NeonDriveInstaller.exe](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDriveInstaller.exe) |
-| macOS Apple Silicon | [NeonDrive-macOS-arm64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDrive-macOS-arm64.dmg) | [NeonDriveInstaller-macOS-arm64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDriveInstaller-macOS-arm64.dmg) |
-| macOS Intel | [NeonDrive-macOS-x64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDrive-macOS-x64.dmg) | [NeonDriveInstaller-macOS-x64.dmg](https://github.com/prostoodin1/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDriveInstaller-macOS-x64.dmg) |
+| Windows 10/11 x64 | [NeonDrive-Setup.exe](https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDrive-Setup.exe) | [NeonDriveInstaller.exe](https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDriveInstaller.exe) |
+| macOS Apple Silicon | [NeonDrive-macOS-arm64.dmg](https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDrive-macOS-arm64.dmg) | [NeonDriveInstaller-macOS-arm64.dmg](https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDriveInstaller-macOS-arm64.dmg) |
+| macOS Intel | [NeonDrive-macOS-x64.dmg](https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDrive-macOS-x64.dmg) | [NeonDriveInstaller-macOS-x64.dmg](https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDriveInstaller-macOS-x64.dmg) |
 
-Neon Drive is independent software and is not affiliated with Google.
+Official Studio Red Barcelona distribution. Neon Drive is independent software and is not affiliated with Google.

@@ -6,17 +6,17 @@
   #define MyAppFileVersion "6.0.4.0"
 #endif
 
-#define MyAppName "Neon Drive"
+#define MyAppName "Studio Red Barcelona - Neon Drive"
 #define MyAppExeName "NeonDriveDownloader.exe"
 
 [Setup]
 AppId={{E6B76B7F-32F0-4C41-89B1-5A1694D1C7E4}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
-AppPublisher=NeonTools
-AppPublisherURL=https://github.com/prostoodin1/neon-drive-downloader
-AppSupportURL=https://github.com/prostoodin1/neon-drive-downloader/issues
-AppUpdatesURL=https://github.com/prostoodin1/neon-drive-downloader/releases
+AppPublisher=Studio Red Barcelona
+AppPublisherURL=https://github.com/Studio-Red-Barcelona
+AppSupportURL=https://github.com/Studio-Red-Barcelona/neon-drive-downloader/issues
+AppUpdatesURL=https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases
 DefaultDirName={localappdata}\Programs\{#MyAppName}
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
