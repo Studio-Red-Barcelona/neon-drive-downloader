@@ -1,0 +1,48 @@
+[
+  {
+    "tag_name": "v6.0.4-alpha",
+    "name": "Studio Red Barcelona · Neon Drive v6.0.4-alpha",
+    "body": "# Studio Red Barcelona · Neon Drive 6.0.4 Alpha\n\nThis Alpha release turns Neon Drive 6 into a more complete, international and publication-ready application.\n\n## Highlights\n\n- Added **Русский, English and Español** with immediate switching in Settings.\n- Added a complete **About Neon Drive** section with version, Alpha channel, platform support and project links.\n- Introduced a modern application icon across the application, Windows installer and macOS bundles.\n- Rebuilt the official screenshots with fictional demo paths and identities only.\n- Refreshed the compact Google Drive-inspired interface and public documentation.\n- Preserved the readable high-contrast multi-folder picker from Beta 3.\n\n## Core transfer features\n\n- Direct Google Drive OAuth2 transfers with bundled Rclone.\n- Local, external, network and mounted cloud-drive paths.\n- Multiple files and whole folders, sequential or parallel queues.\n- Pause/resume, full stop, source-stability checks and destination verification.\n- Persistent settings and transfer counters across application updates.\n- Windows 10/11 and macOS 12+ packages, plus a standalone Version Manager.\n\n> Alpha software should be tested with non-critical data first. Keep the source until Neon reports that every transfer is complete and verified.\n\n## Downloads\n\n| Platform | Application | Version Manager |\n| :--- | :--- | :--- |\n| Windows 10/11 x64 | [NeonDrive-Setup.exe](https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDrive-Setup.exe) | [NeonDriveInstaller.exe](https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDriveInstaller.exe) |\n| macOS Apple Silicon | [NeonDrive-macOS-arm64.dmg](https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDrive-macOS-arm64.dmg) | [NeonDriveInstaller-macOS-arm64.dmg](https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDriveInstaller-macOS-arm64.dmg) |\n| macOS Intel | [NeonDrive-macOS-x64.dmg](https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDrive-macOS-x64.dmg) | [NeonDriveInstaller-macOS-x64.dmg](https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDriveInstaller-macOS-x64.dmg) |\n\nOfficial Studio Red Barcelona distribution. Neon Drive is independent software and is not affiliated with Google.\n",
+    "published_at": "2026-10-09T08:07:08Z",
+    "prerelease": true,
+    "draft": false,
+    "assets": [
+      {
+        "name": "NeonDrive-macOS-arm64.dmg",
+        "browser_download_url": "https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDrive-macOS-arm64.dmg",
+        "size": 78561482,
+        "digest": "sha256:1d793a2d66ceaeb2d31256029f2f3dbd41d302e280fdb04f9bbf1c5b51628bb5"
+      },
+      {
+        "name": "NeonDrive-macOS-x64.dmg",
+        "browser_download_url": "https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDrive-macOS-x64.dmg",
+        "size": 86383420,
+        "digest": "sha256:b1bdc3abb64b895fde6e0d00fc7cdd44d81a09463f0e596121d8ddc3b98e5000"
+      },
+      {
+        "name": "NeonDrive-Setup.exe",
+        "browser_download_url": "https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDrive-Setup.exe",
+        "size": 106501323,
+        "digest": "sha256:f160b2e506249097c3b53c3715026bbd50bf4619bf65877553382977181ea9a4"
+      },
+      {
+        "name": "NeonDriveInstaller-macOS-arm64.dmg",
+        "browser_download_url": "https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDriveInstaller-macOS-arm64.dmg",
+        "size": 42376384,
+        "digest": "sha256:0e20a8fd0f22ee6385533ccc715135c6d6ec34f39edadb74f9c3374552a8c0bc"
+      },
+      {
+        "name": "NeonDriveInstaller-macOS-x64.dmg",
+        "browser_download_url": "https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDriveInstaller-macOS-x64.dmg",
+        "size": 46221600,
+        "digest": "sha256:86ee85e538667af62621ec509d856b81ceeded3421bc1d3ee50997a1e06d051c"
+      },
+      {
+        "name": "NeonDriveInstaller.exe",
+        "browser_download_url": "https://github.com/Studio-Red-Barcelona/neon-drive-downloader/releases/download/v6.0.4-alpha/NeonDriveInstaller.exe",
+        "size": 51048295,
+        "digest": "sha256:13c593a826b493d22f6add2d6468444d2aadf3ea05689f77ca85657ee935b162"
+      }
+    ]
+  }
+]
