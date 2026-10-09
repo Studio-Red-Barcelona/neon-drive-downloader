@@ -526,7 +526,7 @@ class VersionManagerWindow(QMainWindow):
 
 def main() -> int:
     if "--network-self-test" in sys.argv:
-        from .updater import release_history
+        from .updater import REPOSITORY, _public_json, release_history
         from .network import https_context
         report_path = Path(os.environ["NEON_DRIVE_SMOKE_REPORT"])
         try:
@@ -535,7 +535,19 @@ def main() -> int:
                       "method": releases[0]["method"],
                       "trusted_cas": https_context().cert_store_stats()["x509_ca"]}
         except Exception as exc:
-            result = {"ok": False, "error": str(exc)}
+            # A brand-new product repository has no releases yet while its first
+            # installer is being built.  Still verify public HTTPS access and the
+            # bundled CA store against the repository endpoint in that case.
+            try:
+                repository = _public_json(f"https://api.github.com/repos/{REPOSITORY}")
+                expected = REPOSITORY.casefold()
+                actual = str(repository.get("full_name", "")).casefold() if isinstance(repository, dict) else ""
+                if actual != expected:
+                    raise RuntimeError("GitHub returned unexpected repository metadata")
+                result = {"ok": True, "count": 0, "method": "public-repository",
+                          "trusted_cas": https_context().cert_store_stats()["x509_ca"]}
+            except Exception:
+                result = {"ok": False, "error": str(exc)}
         report_path.write_text(json.dumps(result), encoding="utf-8")
         return 0 if result["ok"] else 1
     if "--smoke-test" in sys.argv:

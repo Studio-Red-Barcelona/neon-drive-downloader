@@ -24,6 +24,6 @@ with tempfile.TemporaryDirectory(prefix="neon-installer-smoke-") as temporary:
                             creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0), timeout=90)
     data = json.loads(report.read_text(encoding="utf-8")) if report.exists() else {}
     assert result.returncode == 0 and data.get("ok"), data
-    assert data["method"] in ("public", "public-catalog"), data
+    assert data["method"] in ("public", "public-catalog", "public-repository"), data
     assert data["trusted_cas"] > 0, data
     print("Frozen installer without GitHub CLI or login:", data)
