@@ -526,7 +526,9 @@ class VersionManagerWindow(QMainWindow):
 
 def main() -> int:
     if "--network-self-test" in sys.argv:
-        from .updater import REPOSITORY, _public_json, release_history
+        import urllib.request
+
+        from .updater import REPOSITORY, release_history
         from .network import https_context
         report_path = Path(os.environ["NEON_DRIVE_SMOKE_REPORT"])
         try:
@@ -539,11 +541,14 @@ def main() -> int:
             # installer is being built.  Still verify public HTTPS access and the
             # bundled CA store against the repository endpoint in that case.
             try:
-                repository = _public_json(f"https://api.github.com/repos/{REPOSITORY}")
-                expected = REPOSITORY.casefold()
-                actual = str(repository.get("full_name", "")).casefold() if isinstance(repository, dict) else ""
-                if actual != expected:
-                    raise RuntimeError("GitHub returned unexpected repository metadata")
+                request = urllib.request.Request(
+                    f"https://raw.githubusercontent.com/{REPOSITORY}/main/README.md",
+                    headers={"User-Agent": "NeonDriveInstaller"},
+                )
+                with urllib.request.urlopen(request, timeout=15, context=https_context()) as response:
+                    readme = response.read(4096)
+                if not readme or b"Neon Drive" not in readme:
+                    raise RuntimeError("GitHub returned unexpected repository content")
                 result = {"ok": True, "count": 0, "method": "public-repository",
                           "trusted_cas": https_context().cert_store_stats()["x509_ca"]}
             except Exception:
